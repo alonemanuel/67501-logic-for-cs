@@ -149,8 +149,6 @@ class Formula:
         elif is_binary(self.root):
             return L_BRACK + str(self.first) + self.root + str(self.second) + R_BRACK
 
-
-
     def variables(self) -> Set[str]:
         """Finds all atomic propositions (variables) in the current formula.
 
@@ -158,6 +156,14 @@ class Formula:
             A set of all atomic propositions used in the current formula.
         """
         # Task 1.2
+        if is_variable(self.root):
+            return {self.root}
+        elif is_constant(self.root):
+            return set()
+        elif is_unary(self.root):
+            return self.first.variables()
+        elif is_binary(self.root):
+            return set.union(self.first.variables(), self.second.variables())
 
     def operators(self) -> Set[str]:
         """Finds all operators in the current formula.
@@ -167,6 +173,14 @@ class Formula:
             current formula.
         """
         # Task 1.3
+        if is_variable(self.root):
+            return set()
+        elif is_constant(self.root):
+            return {self.root}
+        elif is_unary(self.root):
+            return set.union({self.root}, self.first.operators())
+        elif is_binary(self.root):
+            return set.union({self.root}, self.first.operators(), self.second.operators())
 
     @staticmethod
     def parse_prefix(s: str) -> Tuple[Union[Formula, None], str]:
@@ -185,6 +199,17 @@ class Formula:
             the error message is a string with some human-readable content.
         """
         # Task 1.4
+        if s[0]==L_BRACK:
+
+        for i, ch in enumerate(s):
+            if ch == '(':
+
+
+        i = 0
+
+        while s[i].isdigit() or s[i].isalpha():
+            i += 1
+        return Formula(s[:i], s[i:])
 
     @staticmethod
     def is_formula(s: str) -> bool:
