@@ -10,6 +10,12 @@ from typing import Mapping, Optional, Set, Tuple, Union
 
 from logic_utils import frozen
 
+PREFIX_ERR_MSG = 'Not a valid prefix of a formula'
+
+IMPLIES = '->'
+
+OR = '|'
+
 R_BRACK = ')'
 
 L_BRACK = '('
@@ -199,17 +205,110 @@ class Formula:
             the error message is a string with some human-readable content.
         """
         # Task 1.4
-        if s[0]==L_BRACK:
 
-        for i, ch in enumerate(s):
-            if ch == '(':
+        if s == '':
+            return None, PREFIX_ERR_MSG
+        elif len(s) == 1:
+            return (Formula(s), '') if ('p' <= s <= 'z' or is_constant(s)) else (None, PREFIX_ERR_MSG)
+        elif 'p' <= s[0] <= 'z':
+            i = 1
+            while (i < len(s)) and ('0' < s[i] < '9'):
+                i += 1
+            return Formula(s[:i]), s[i:]
 
+        elif is_constant(s[0]):
+            return Formula(s[0]), s[1:]
+        elif is_unary(s[0]):
+            ff, rr = Formula.parse_prefix(s[1:])
+            if ff is None:
+                return None, PREFIX_ERR_MSG
+            else:
+                return Formula(s[0], ff), rr
 
-        i = 0
-
-        while s[i].isdigit() or s[i].isalpha():
-            i += 1
-        return Formula(s[:i], s[i:])
+        elif s[0] == L_BRACK:
+            ff, rr = Formula.parse_prefix(s[1:])
+            if len(rr) < 1:
+                return None, PREFIX_ERR_MSG
+            else:
+                if is_binary(rr[0]):
+                    end_len = 1
+                elif len(rr) >= 2 and is_binary(rr[0:2]):
+                    end_len = 2
+                else:
+                    return None, PREFIX_ERR_MSG
+                ff2, rr2 = Formula.parse_prefix(rr[end_len:])
+                if ff2 is None:
+                    return None, PREFIX_ERR_MSG
+                else:
+                    if len(rr2) > 0 and rr2[0] == R_BRACK:
+                        rr2 = rr2[1:]
+                    else:
+                        return None, PREFIX_ERR_MSG
+                    return Formula(rr[0:end_len], ff, ff2), rr2
+        else:
+            return None, PREFIX_ERR_MSG
+    #
+    # @staticmethod
+    # def __prefix_base_case(s):
+    #     if s == '':
+    #         ff, rr = None, PREFIX_ERR_MSG
+    #     elif len(s) == 1:
+    #         ff, rr = (Formula(s), '') if ('p' <= s <= 'z' or is_constant(s)) else (None, PREFIX_ERR_MSG)
+    #     elif 'p' <= s[0] <= 'z':
+    #         i = 1
+    #         while (i < len(s)) and ('0' < s[i] < '9'):
+    #             i += 1
+    #         ff, rr = Formula(s[:i]), s[i:]
+    #     elif is_constant(s[0]):
+    #         ff, rr = Formula(s[0]), s[1:]
+    #     else:
+    #         ff, rr = None, PREFIX_ERR_MSG
+    #
+    # if s == '':
+    #     return None, PREFIX_ERR_MSG
+    # elif len(s) == 1:
+    #     return (Formula(s), '') if ('p' <= s <= 'z' or is_constant(s)) else (None, PREFIX_ERR_MSG)
+    # elif 'p' <= s[0] <= 'z':
+    #     i = 1
+    #     while (i < len(s)) and ('0' < s[i] < '9'):
+    #         i += 1
+    #     return Formula(s[:i]), s[i:]
+    #
+    # elif is_constant(s[0]):
+    #     return Formula(s[0]), s[1:]
+    # elif is_unary(s[0]):
+    #     ff, rr = Formula.parse_prefix(s[1:])
+    #     if ff is None:
+    #         return None, PREFIX_ERR_MSG
+    #     else:
+    #         return Formula(s[0], ff), rr
+    #
+    # elif s[0] == L_BRACK:
+    #     ff, rr = Formula.parse_prefix(s[1:])
+    #     if len(rr) < 1:
+    #         return None, PREFIX_ERR_MSG
+    #     else:
+    #         if is_binary(rr[0]):
+    #             end_len = 1
+    #         elif len(rr) >= 2 and is_binary(rr[0:2]):
+    #             end_len = 2
+    #         else:
+    #             return None, PREFIX_ERR_MSG
+    #         ff2, rr2 = Formula.parse_prefix(rr[end_len:])
+    #         if ff2 is None:
+    #             return None, PREFIX_ERR_MSG
+    #         else:
+    #             if len(rr2) > 0 and rr2[0] == R_BRACK:
+    #                 rr2 = rr2[1:]
+    #             else:
+    #                 return None, PREFIX_ERR_MSG
+    #             return Formula(rr[0:end_len], ff, ff2), rr2
+    # else:
+    #     return None, PREFIX_ERR_MSG
+    #
+    # @staticmethod
+    # def __prefix_induction(s):
+    #     pass
 
     @staticmethod
     def is_formula(s: str) -> bool:
@@ -223,6 +322,8 @@ class Formula:
             representation of a formula, ``False`` otherwise.
         """
         # Task 1.5
+        ff, rr = Formula.parse_prefix(s)
+        return rr == ''
 
     @staticmethod
     def parse(s: str) -> Formula:
@@ -236,6 +337,8 @@ class Formula:
         """
         assert Formula.is_formula(s)
         # Task 1.6
+        ff, rr = Formula.parse_prefix(s)
+        return ff
 
     # Optional tasks for Chapter 1
 
