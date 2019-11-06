@@ -105,6 +105,8 @@ def truth_values(formula: Formula, models: Iterable[Model]) -> Iterable[bool]:
         each of the given models, in the order of the given models.
     """
     # Task 2.3
+    for model in models:
+        yield evaluate(formula, model)
 
 
 def print_truth_table(formula: Formula) -> None:
