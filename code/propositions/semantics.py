@@ -4,13 +4,14 @@
 # File name: propositions/semantics.py
 
 """Semantic analysis of propositional-logic constructs."""
-
+import itertools
 from typing import AbstractSet, Iterable, Iterator, List, Mapping
 
 from propositions.syntax import *
 from propositions.proofs import *
 
 Model = Mapping[str, bool]
+
 
 def is_model(model: Model) -> bool:
     """Checks if the given dictionary a model over some set of variables.
@@ -27,6 +28,7 @@ def is_model(model: Model) -> bool:
             return False
     return True
 
+
 def variables(model: Model) -> AbstractSet[str]:
     """Finds all variables over which the given model is defined.
 
@@ -38,6 +40,7 @@ def variables(model: Model) -> AbstractSet[str]:
     """
     assert is_model(model)
     return model.keys()
+
 
 def evaluate(formula: Formula, model: Model) -> bool:
     """Calculates the truth value of the given formula in the given model.
@@ -53,6 +56,21 @@ def evaluate(formula: Formula, model: Model) -> bool:
     assert is_model(model)
     assert formula.variables().issubset(variables(model))
     # Task 2.1
+    root = formula.root
+    if is_constant(root):
+        return root == 'T'
+    elif is_variable(root):
+        return model[root]
+    elif is_unary(root):
+        return not evaluate(formula.first, model)
+    elif is_binary(root):
+        if root == '&':
+            return evaluate(formula.first, model) and evaluate(formula.second, model)
+        elif root == '|':
+            return evaluate(formula.first, model) or evaluate(formula.second, model)
+        elif root == '->':
+            return evaluate(formula.first, model) == False or evaluate(formula.second, model) == True
+
 
 def all_models(variables: List[str]) -> Iterable[Model]:
     """Calculates all possible models over the given variables.
@@ -69,9 +87,10 @@ def all_models(variables: List[str]) -> Iterable[Model]:
         >>> list(all_models(['p', 'q']))
         [{'p': False, 'q': False}, {'p': False, 'q': True}, {'p': True, 'q': False}, {'p': True, 'q': True}]
     """
-    for v in variables:
-        assert is_variable(v)
-    # Task 2.2
+    perm_iter = itertools.product([False, True], repeat=len(variables))
+    for perm in perm_iter:
+        yield dict(zip(variables, perm))
+
 
 def truth_values(formula: Formula, models: Iterable[Model]) -> Iterable[bool]:
     """Calculates the truth value of the given formula in each of the given
@@ -86,6 +105,7 @@ def truth_values(formula: Formula, models: Iterable[Model]) -> Iterable[bool]:
         each of the given models, in the order of the given models.
     """
     # Task 2.3
+
 
 def print_truth_table(formula: Formula) -> None:
     """Prints the truth table of the given formula, with variable-name columns
@@ -105,6 +125,7 @@ def print_truth_table(formula: Formula) -> None:
     """
     # Task 2.4
 
+
 def is_tautology(formula: Formula) -> bool:
     """Checks if the given formula is a tautology.
 
@@ -115,6 +136,7 @@ def is_tautology(formula: Formula) -> bool:
         ``True`` if the given formula is a tautology, ``False`` otherwise.
     """
     # Task 2.5a
+
 
 def is_contradiction(formula: Formula) -> bool:
     """Checks if the given formula is a contradiction.
@@ -127,6 +149,7 @@ def is_contradiction(formula: Formula) -> bool:
     """
     # Task 2.5b
 
+
 def is_satisfiable(formula: Formula) -> bool:
     """Checks if the given formula is satisfiable.
 
@@ -137,6 +160,7 @@ def is_satisfiable(formula: Formula) -> bool:
         ``True`` if the given formula is satisfiable, ``False`` otherwise.
     """
     # Task 2.5c
+
 
 def synthesize_for_model(model: Model) -> Formula:
     """Synthesizes a propositional formula in the form of a single clause that
@@ -151,6 +175,7 @@ def synthesize_for_model(model: Model) -> Formula:
     """
     assert is_model(model)
     # Task 2.6
+
 
 def synthesize(variables: List[str], values: Iterable[bool]) -> Formula:
     """Synthesizes a propositional formula in DNF over the given variables, from
@@ -178,6 +203,7 @@ def synthesize(variables: List[str], values: Iterable[bool]) -> Formula:
     assert len(variables) > 0
     # Task 2.7
 
+
 # Tasks for Chapter 4
 
 def evaluate_inference(rule: InferenceRule, model: Model) -> bool:
@@ -193,6 +219,7 @@ def evaluate_inference(rule: InferenceRule, model: Model) -> bool:
     """
     assert is_model(model)
     # Task 4.2
+
 
 def is_sound_inference(rule: InferenceRule) -> bool:
     """Checks if the given inference rule is sound, i.e., whether its
