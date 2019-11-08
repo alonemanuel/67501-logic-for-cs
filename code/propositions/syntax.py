@@ -69,9 +69,9 @@ def is_binary(s: str) -> bool:
     Returns:
         ``True`` if the given string is a binary operator, ``False`` otherwise.
     """
-    return s == '&' or s == '|' or s == '->'
+    # return s == '&' or s == '|' or s == '->'
     # For Chapter 3:
-    # return s in {'&', '|',  '->', '+', '<->', '-&', '-|'}
+    return s in {'&', '|', '->', '+', '<->', '-&', '-|'}
 
 
 @frozen
@@ -234,8 +234,13 @@ class Formula:
             else:
                 if is_binary(rr[0]):
                     end_len = 1
-                elif len(rr) >= 2 and is_binary(rr[0:2]):
-                    end_len = 2
+                elif len(rr) >= 2:
+                    if is_binary(rr[0:2]):
+                        end_len = 2
+                    elif is_binary(rr[0:3]):
+                        end_len = 3
+                    else:
+                        return None, PREFIX_ERR_MSG
                 else:
                     return None, PREFIX_ERR_MSG
                 ff2, rr2 = Formula.parse_prefix(rr[end_len:])
