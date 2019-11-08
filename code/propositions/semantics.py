@@ -10,6 +10,8 @@ from typing import AbstractSet, Iterable, Iterator, List, Mapping
 from propositions.syntax import *
 from propositions.proofs import *
 
+PIPE = '|'
+
 Model = Mapping[str, bool]
 
 
@@ -126,6 +128,33 @@ def print_truth_table(formula: Formula) -> None:
         | T | T   | F        |
     """
     # Task 2.4
+    __print_header(formula)
+    __print_body(formula)
+
+
+def __print_body(formula):
+    vars = list(formula.variables())
+    vars.sort()
+    models = all_models(vars)
+    for model in models:
+        print(PIPE, end='')
+        for var in vars:
+            print(' {}{} |'.format(str(model[var])[0], ' ' * (len(var) - 1)), end='')
+        eval = evaluate(formula, model)
+        print(' {}{} |'.format(str(eval)[0], ' ' * (len(repr(formula)) - 1)))
+
+
+def __print_header(formula):
+    print(PIPE, end='')
+    vars = list(formula.variables())
+    vars.sort()
+    for var in vars:
+        print(' {} |'.format(var), end='')
+    print(' {} |'.format(repr(formula)))
+    print(PIPE, end='')
+    for var in vars:
+        print('-{}-|'.format('-' * len(var)), end='')
+    print('-{}-|'.format('-' * len(repr(formula))))
 
 
 def is_tautology(formula: Formula) -> bool:
@@ -138,6 +167,11 @@ def is_tautology(formula: Formula) -> bool:
         ``True`` if the given formula is a tautology, ``False`` otherwise.
     """
     # Task 2.5a
+    for val in truth_values(formula, all_models(formula.variables())):
+        if val is False:
+            return False
+    else:
+        return True
 
 
 def is_contradiction(formula: Formula) -> bool:
@@ -150,6 +184,11 @@ def is_contradiction(formula: Formula) -> bool:
         ``True`` if the given formula is a contradiction, ``False`` otherwise.
     """
     # Task 2.5b
+    for val in truth_values(formula, all_models(formula.variables())):
+        if val is True:
+            return False
+    else:
+        return True
 
 
 def is_satisfiable(formula: Formula) -> bool:
@@ -162,6 +201,7 @@ def is_satisfiable(formula: Formula) -> bool:
         ``True`` if the given formula is satisfiable, ``False`` otherwise.
     """
     # Task 2.5c
+    return not is_contradiction(formula)
 
 
 def synthesize_for_model(model: Model) -> Formula:
@@ -177,6 +217,17 @@ def synthesize_for_model(model: Model) -> Formula:
     """
     assert is_model(model)
     # Task 2.6
+    items = list(model.items())
+    return __synthesize_model_helper(items, 0)
+
+
+def __synthesize_model_helper(items, idx):
+    var, val = items[idx]
+    if idx == len(items) - 1:
+        return Formula(var) if val else Formula('~', Formula(var))
+    else:
+        return Formula('&', Formula(var) if val else Formula('~', Formula(var)),
+                       __synthesize_model_helper(items, idx + 1))
 
 
 def synthesize(variables: List[str], values: Iterable[bool]) -> Formula:
@@ -204,9 +255,24 @@ def synthesize(variables: List[str], values: Iterable[bool]) -> Formula:
     """
     assert len(variables) > 0
     # Task 2.7
+    models = list(itertools.compress(all_models(variables), values))
+    if len(models) == 0:
+        formula = Formula(variables[0])
+        return Formula('&', formula, Formula('~', formula))
+    else:
+        return __synthesize_helper(0, models)
+
+
+def __synthesize_helper(i, models):
+    formula = synthesize_for_model(models[i])
+    if i == len(models) - 1:
+        return formula
+    else:
+        return Formula('|', formula, __synthesize_helper(i + 1, models))
 
 
 # Tasks for Chapter 4
+
 
 def evaluate_inference(rule: InferenceRule, model: Model) -> bool:
     """Checks if the given inference rule holds in the given model.
