@@ -10,6 +10,20 @@ from typing import AbstractSet, Iterable, Iterator, List, Mapping
 from propositions.syntax import *
 from propositions.proofs import *
 
+NOR_OP = '-|'
+
+NAND_OP = '-&'
+
+IFF_OP = '<->'
+
+XOR_OP = '+'
+
+IMPLY_OP = '->'
+
+OR_OP = '|'
+
+AND_OP = '&'
+
 PIPE = '|'
 
 Model = Mapping[str, bool]
@@ -66,12 +80,23 @@ def evaluate(formula: Formula, model: Model) -> bool:
     elif is_unary(root):
         return not evaluate(formula.first, model)
     elif is_binary(root):
-        if root == '&':
-            return evaluate(formula.first, model) and evaluate(formula.second, model)
-        elif root == '|':
-            return evaluate(formula.first, model) or evaluate(formula.second, model)
-        elif root == '->':
-            return evaluate(formula.first, model) == False or evaluate(formula.second, model) == True
+        res_l = evaluate(formula.first, model)
+        res_r = evaluate(formula.second, model)
+
+        if root == AND_OP:
+            return res_l and res_r
+        elif root == OR_OP:
+            return res_l or res_r
+        elif root == IMPLY_OP:
+            return not res_l or res_r
+        elif root == XOR_OP:
+            return (res_l and not res_r) or (not res_l and res_r)
+        elif root == IFF_OP:
+            return (not res_l and not res_r) or (res_l and res_r)
+        elif root == NAND_OP:
+            return not (res_l and res_r)
+        elif root == NOR_OP:
+            return not (res_l or res_r)
 
 
 def all_models(variables: List[str]) -> Iterable[Model]:

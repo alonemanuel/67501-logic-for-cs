@@ -329,6 +329,19 @@ class Formula:
         for variable in substitution_map:
             assert is_variable(variable)
         # Task 3.3
+        if is_variable(self.root):
+            if self.root in substitution_map.keys():
+                return substitution_map[self.root]
+            else:
+                return self
+        elif is_unary(self.root):
+            return Formula(self.root, self.first.substitute_variables(substitution_map))
+        elif is_binary(self.root):
+            l_formula = self.first.substitute_variables(substitution_map)
+            r_formula = self.second.substitute_variables(substitution_map)
+            return Formula(self.root, l_formula, r_formula)
+        else:
+            return self
 
     def substitute_operators(
             self, substitution_map: Mapping[str, Formula]) -> Formula:
@@ -355,3 +368,18 @@ class Formula:
                    is_constant(operator)
             assert substitution_map[operator].variables().issubset({'p', 'q'})
         # Task 3.4
+        if is_variable(self.root):
+            return self
+        elif is_constant(self.root):
+            if self.root in substitution_map.keys():
+                return substitution_map[self.root]
+            else:
+                return self
+        else:
+            l_formula = self.first.substitute_operators(substitution_map)
+            r_formula = None if is_unary(self.root) else self.second.substitute_operators(substitution_map)
+            if self.root in substitution_map.keys():
+                sub_dict = {'p': l_formula, 'q': r_formula}
+                return substitution_map[self.root].substitute_variables(sub_dict)
+            else:
+                return Formula(self.root, l_formula, r_formula)
