@@ -10,19 +10,16 @@ from typing import AbstractSet, Iterable, Iterator, List, Mapping
 from propositions.syntax import *
 from propositions.proofs import *
 
+NOT_OP = '~'
 NOR_OP = '-|'
-
 NAND_OP = '-&'
-
 IFF_OP = '<->'
-
 XOR_OP = '+'
-
 IMPLY_OP = '->'
-
 OR_OP = '|'
-
 AND_OP = '&'
+F_OP='F'
+T_OP='T'
 
 PIPE = '|'
 
