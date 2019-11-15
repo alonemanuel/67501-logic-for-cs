@@ -7,13 +7,14 @@
 
 from __future__ import annotations
 from typing import AbstractSet, Iterable, FrozenSet, List, Mapping, Optional, \
-                   Set, Tuple, Union
+    Set, Tuple, Union
 
 from logic_utils import frozen
 
 from propositions.syntax import *
 
 SpecializationMap = Mapping[str, Formula]
+
 
 @frozen
 class InferenceRule:
@@ -30,7 +31,7 @@ class InferenceRule:
     conclusion: Formula
 
     def __init__(self, assumptions: Iterable[Formula], conclusion: Formula) -> \
-        None:
+            None:
         """Initialized an `InferenceRule` from its assumptions and conclusion.
 
         Parameters:
@@ -69,7 +70,7 @@ class InferenceRule:
 
     def __hash__(self) -> int:
         return hash(str(self))
-        
+
     def __repr__(self) -> str:
         """Computes a string representation of the current inference rule.
 
@@ -88,6 +89,11 @@ class InferenceRule:
             conclusion of the current inference rule.
         """
         # Task 4.1
+        vars = set()
+        for formula in self.assumptions:
+            vars = vars.union(formula.variables())
+        vars = vars.union(self.conclusion.variables())
+        return vars
 
     def specialize(self, specialization_map: SpecializationMap) -> \
             InferenceRule:
@@ -101,7 +107,7 @@ class InferenceRule:
 
         Returns:
             The resulting inference rule.
-        """        
+        """
         for variable in specialization_map:
             assert is_variable(variable)
         # Task 4.4
@@ -130,7 +136,7 @@ class InferenceRule:
             for variable in specialization_map2:
                 assert is_variable(variable)
         # Task 4.5a
-        
+
     @staticmethod
     def formula_specialization_map(general: Formula, specialization: Formula) \
             -> Union[SpecializationMap, None]:
@@ -174,6 +180,7 @@ class InferenceRule:
         """
         return general.specialization_map(self) is not None
 
+
 @frozen
 class Proof:
     """A frozen deductive proof, comprised of a statement in the form of an
@@ -190,7 +197,7 @@ class Proof:
     statment: InferenceRule
     rules: FrozenSet[InferenceRule]
     lines: Tuple[Proof.Line, ...]
-    
+
     def __init__(self, statement: InferenceRule,
                  rules: AbstractSet[InferenceRule],
                  lines: Iterable[Proof.Line]) -> None:
@@ -279,7 +286,7 @@ class Proof:
                 of the proof, ``False`` otherwise.
             """
             return self.rule is None
-        
+
     def __repr__(self) -> str:
         """Computes a string representation of the current proof.
 
@@ -334,7 +341,7 @@ class Proof:
         """
         assert line_number < len(self.lines)
         # Task 4.6b
-        
+
     def is_valid(self) -> bool:
         """Checks if the current proof is a valid proof of its claimed statement
         via its inference rules.
@@ -344,6 +351,7 @@ class Proof:
             statement via its inference rules, ``False`` otherwise.
         """
         # Task 4.6c
+
 
 # Chapter 5 tasks
 
@@ -363,8 +371,9 @@ def prove_specialization(proof: Proof, specialization: InferenceRule) -> Proof:
     assert specialization.is_specialization_of(proof.statement)
     # Task 5.1
 
+
 def inline_proof_once(main_proof: Proof, line_number: int, lemma_proof: Proof) \
-    -> Proof:
+        -> Proof:
     """Inlines the given proof of a "lemma" inference rule into the given proof
     that uses that "lemma" rule, eliminating the usage of (a specialization of)
     that "lemma" rule in the specified line in the latter proof.
@@ -390,6 +399,7 @@ def inline_proof_once(main_proof: Proof, line_number: int, lemma_proof: Proof) \
     assert main_proof.lines[line_number].rule == lemma_proof.statement
     assert lemma_proof.is_valid()
     # Task 5.2a
+
 
 def inline_proof(main_proof: Proof, lemma_proof: Proof) -> Proof:
     """Inlines the given proof of a "lemma" inference rule into the given proof
