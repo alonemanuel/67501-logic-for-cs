@@ -327,3 +327,8 @@ def is_sound_inference(rule: InferenceRule) -> bool:
         ``True`` if the given inference rule is sound, ``False`` otherwise.
     """
     # Task 4.3
+    for model in all_models(rule.variables()):
+        if not evaluate_inference(rule, model):
+            return False
+    else:
+        return True
