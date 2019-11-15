@@ -150,7 +150,7 @@ class InferenceRule:
             else:
                 merged[key] = value
         else:
-            merged= {**specialization_map1, **specialization_map2}
+            merged = {**specialization_map1, **specialization_map2}
             return merged
 
     @staticmethod
@@ -168,6 +168,18 @@ class InferenceRule:
             in fact not a specialization of `general`.
         """
         # Task 4.5b
+        if is_variable(general.root):
+            return {general.root: specialization}
+        elif is_constant(general.root) and is_constant(specialization.root) and general.root == specialization.root:
+            return dict()
+        elif is_unary(general.root) and is_unary(specialization.root) and general.root == specialization.root:
+            return InferenceRule.formula_specialization_map(general.first, specialization.first)
+        elif is_binary(general.root) and is_binary(specialization.root) and general.root == specialization.root:
+            spec_map1 = InferenceRule.formula_specialization_map(general.first, specialization.first)
+            spec_map2 = InferenceRule.formula_specialization_map(general.second, specialization.second)
+            return InferenceRule.merge_specialization_maps(spec_map1, spec_map2)
+        else:
+            return None
 
     def specialization_map(self, specialization: InferenceRule) -> \
             Union[SpecializationMap, None]:
