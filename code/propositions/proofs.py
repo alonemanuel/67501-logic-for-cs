@@ -141,6 +141,17 @@ class InferenceRule:
             for variable in specialization_map2:
                 assert is_variable(variable)
         # Task 4.5a
+        merged = dict()
+        if specialization_map1 is None or specialization_map2 is None:
+            return None
+        for key, value in specialization_map1.items():
+            if (key in specialization_map2.keys()) and (specialization_map2[key] != value):
+                return None
+            else:
+                merged[key] = value
+        else:
+            merged= {**specialization_map1, **specialization_map2}
+            return merged
 
     @staticmethod
     def formula_specialization_map(general: Formula, specialization: Formula) \
