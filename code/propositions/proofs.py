@@ -111,6 +111,11 @@ class InferenceRule:
         for variable in specialization_map:
             assert is_variable(variable)
         # Task 4.4
+        sub_assumptions = list()
+        for assumption in self.assumptions:
+            sub_assumptions.append(assumption.substitute_variables(specialization_map))
+        conclusion = self.conclusion.substitute_variables(specialization_map)
+        return InferenceRule(sub_assumptions, conclusion)
 
     @staticmethod
     def merge_specialization_maps(
