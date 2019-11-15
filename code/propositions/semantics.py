@@ -18,8 +18,8 @@ XOR_OP = '+'
 IMPLY_OP = '->'
 OR_OP = '|'
 AND_OP = '&'
-F_OP='F'
-T_OP='T'
+F_OP = 'F'
+T_OP = 'T'
 
 PIPE = '|'
 
@@ -309,6 +309,11 @@ def evaluate_inference(rule: InferenceRule, model: Model) -> bool:
     """
     assert is_model(model)
     # Task 4.2
+    for assumption in rule.assumptions:
+        if not evaluate(assumption, model):
+            return True
+    else:
+        return evaluate(rule.conclusion, model)
 
 
 def is_sound_inference(rule: InferenceRule) -> bool:
