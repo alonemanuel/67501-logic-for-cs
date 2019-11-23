@@ -58,6 +58,28 @@ def prove_I0() -> Proof:
         `~propositions.axiomatic_systems.D`.
     """
     # Task 4.8
+    statement = I0
+    rules = {MP, I1, D}
+
+    f0 = Formula.parse('(p->((p->p)->p))')
+    l0 = Proof.Line(f0, I1, [])
+
+    f1 = Formula.parse('((p->((p->p)->p))->((p->(p->p))->(p->p)))')
+    l1 = Proof.Line(f1, D, [])
+
+    f2 = Formula.parse('(p->(p->p))')
+    l2 = Proof.Line(f2, I1, [])
+
+    f3 = Formula.parse('((p->(p->p))->(p->p))')
+    l3 = Proof.Line(f3, MP, [0, 1])
+
+    f4 = Formula.parse('(p->p)')
+    l4 = Proof.Line(f4, MP, [2, 3])
+
+    lines = [l0, l1, l2, l3, l4]
+
+    proof = Proof(statement, rules, lines)
+    return proof
 
 
 #: Hypothetical syllogism
