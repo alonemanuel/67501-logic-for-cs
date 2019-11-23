@@ -16,9 +16,10 @@ from propositions.deduction import *
 A_RULE = InferenceRule([Formula.parse('x'), Formula.parse('y')],
                        Formula.parse('(x&y)'))
 #: Conjunction elimination (right) inference rule
-AE1_RULE = InferenceRule([Formula.parse('(x&y)')],Formula.parse('y'))
+AE1_RULE = InferenceRule([Formula.parse('(x&y)')], Formula.parse('y'))
 #: Conjunction elimination (left) inference rule
-AE2_RULE = InferenceRule([Formula.parse('(x&y)')],Formula.parse('x'))
+AE2_RULE = InferenceRule([Formula.parse('(x&y)')], Formula.parse('x'))
+
 
 def prove_and_commutativity() -> Proof:
     """Proves ``'(q&p)'`` from ``'(p&q)'`` via `A_RULE`, `AE2_RULE`, and
@@ -29,6 +30,20 @@ def prove_and_commutativity() -> Proof:
         the inference rules `A_RULE`, `AE2_RULE`, and `AE1_RULE`.
     """
     # Task 4.7
+    statement = InferenceRule([Formula.parse('(p&q)')], Formula.parse('(q&p)'))
+    rules = {A_RULE, AE1_RULE, AE2_RULE}
+    f0 = Formula.parse('q')
+    f1 = Formula.parse('p')
+    f2 = Formula.parse('(p&q)')
+    f3 = Formula.parse('(q&p)')
+    l0 = Proof.Line(f2)
+    l1 = Proof.Line(f0, AE1_RULE, [0])
+    l2 = Proof.Line(f1, AE2_RULE, [0])
+    l3 = Proof.Line(f3, A_RULE, [1, 2])
+    lines = [l0, l1, l2, l3]
+    proof = Proof(statement, rules, lines)
+    return proof
+
 
 def prove_I0() -> Proof:
     """Proves `~propositions.axiomatic_systems.I0` via
@@ -44,9 +59,11 @@ def prove_I0() -> Proof:
     """
     # Task 4.8
 
+
 #: Hypothetical syllogism
 HS = InferenceRule([Formula.parse('(p->q)'), Formula.parse('(q->r)')],
                    Formula.parse('(p->r)'))
+
 
 def prove_hypothetical_syllogism() -> Proof:
     """Proves `HS` via `~propositions.axiomatic_systems.MP`,
@@ -61,6 +78,7 @@ def prove_hypothetical_syllogism() -> Proof:
         `~propositions.axiomatic_systems.D`.
     """
     # Task 5.5
+
 
 def prove_I2() -> Proof:
     """Proves `~propositions.axiomatic_systems.I2` via
@@ -79,8 +97,10 @@ def prove_I2() -> Proof:
     """
     # Optional Task 6.7a
 
+
 #: Double-negation elimination
 NNE = InferenceRule([], Formula.parse('(~~p->p)'))
+
 
 def prove_NNE() -> Proof:
     """Proves `NNE` via `~propositions.axiomatic_systems.MP`,
@@ -97,6 +117,7 @@ def prove_NNE() -> Proof:
         `~propositions.axiomatic_systems.N`.
     """
     # Optional Task 6.7b
+
 
 def prove_NN() -> Proof:
     """Proves `~propositions.axiomatic_systems.NN` via
@@ -115,8 +136,10 @@ def prove_NN() -> Proof:
     """
     # Optional Task 6.7c
 
+
 #: Contraposition
 CP = InferenceRule([], Formula.parse('((p->q)->(~q->~p))'))
+
 
 def prove_CP() -> Proof:
     """Proves `CP` via `~propositions.axiomatic_systems.MP`,
@@ -133,6 +156,7 @@ def prove_CP() -> Proof:
         `~propositions.axiomatic_systems.N`.
     """
     # Optional Task 6.7d
+
 
 def prove_NI() -> Proof:
     """Proves `~propositions.axiomatic_systems.NI` via
@@ -151,8 +175,10 @@ def prove_NI() -> Proof:
     """
     # Optional Task 6.7e
 
+
 #: Consequentia mirabilis
 CM = InferenceRule([Formula.parse('(~p->p)')], Formula.parse('p'))
+
 
 def prove_CM() -> Proof:
     """Proves `CM` via `~propositions.axiomatic_systems.MP`,
@@ -170,6 +196,7 @@ def prove_CM() -> Proof:
     """
     # Optional Task 6.7f
 
+
 def prove_R() -> Proof:
     """Proves `~propositions.axiomatic_systems.R` via
     `~propositions.axiomatic_systems.MP`, `~propositions.axiomatic_systems.I0`,
@@ -186,6 +213,7 @@ def prove_R() -> Proof:
     """
     # Optional Task 6.7g
 
+
 def prove_N() -> Proof:
     """Proves `~propositions.axiomatic_systems.N` via
     `~propositions.axiomatic_systems.MP`, `~propositions.axiomatic_systems.I0`,
@@ -201,6 +229,7 @@ def prove_N() -> Proof:
         `~propositions.axiomatic_systems.N_ALTERNATIVE`.
     """
     # Optional Task 6.8
+
 
 def prove_NA1() -> Proof:
     """Proves `~propositions.axiomatic_systems.NA1` via
@@ -220,6 +249,7 @@ def prove_NA1() -> Proof:
     """
     # Optional Task 6.9a
 
+
 def prove_NA2() -> Proof:
     """Proves `~propositions.axiomatic_systems.NA2` via
     `~propositions.axiomatic_systems.MP`, `~propositions.axiomatic_systems.I0`,
@@ -237,6 +267,7 @@ def prove_NA2() -> Proof:
         `~propositions.axiomatic_systems.AE2`.
     """
     # Optional Task 6.9b
+
 
 def prove_NO() -> Proof:
     """Proves `~propositions.axiomatic_systems.NO` via
