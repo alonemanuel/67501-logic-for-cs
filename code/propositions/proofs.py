@@ -358,7 +358,7 @@ class Proof:
         line = self.lines[line_number]
         conclusion = line.formula
         assumptions = list()
-        if line.rule is not None and  line.assumptions is not None:
+        if line.rule is not None and line.assumptions is not None:
             for assumption_i in line.assumptions:
                 assumptions.append(self.lines[assumption_i].formula)
             return InferenceRule(assumptions, conclusion)
@@ -386,6 +386,16 @@ class Proof:
         """
         assert line_number < len(self.lines)
         # Task 4.6b
+        line = self.lines[line_number]
+        if line.is_assumption():
+            return line.formula in self.statement.assumptions
+        else:
+            gate1 = line.rule in self.rules
+            inf_rule = self.rule_for_line(line_number)
+            gate2_a = (not line.assumptions) or (max(line.assumptions) < line_number)
+            gate2_b = inf_rule.is_specialization_of(line.rule)
+            gate2 = gate2_a and gate2_b
+            return gate1 and gate2
 
     def is_valid(self) -> bool:
         """Checks if the current proof is a valid proof of its claimed statement
