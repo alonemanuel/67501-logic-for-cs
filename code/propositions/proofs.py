@@ -406,6 +406,11 @@ class Proof:
             statement via its inference rules, ``False`` otherwise.
         """
         # Task 4.6c
+        gate_lines = True
+        for i in range(len(self.lines)):
+            gate_lines *= self.is_line_valid(i)
+        gate_final = self.lines[-1].formula == self.statement.conclusion
+        return gate_lines and gate_final
 
 
 # Chapter 5 tasks
