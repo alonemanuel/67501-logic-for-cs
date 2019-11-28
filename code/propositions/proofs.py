@@ -506,23 +506,6 @@ def inline_proof_once(main_proof: Proof, line_number: int, lemma_proof: Proof) \
     return Proof(main_proof.statement, rules, lines)
 
 
-#
-#
-# specialized = prove_specialization(lemma_proof, lemma_proof.statement.specialize(
-#     InferenceRule.formula_specialization_map(
-#         lemma_proof.statement.conclusion, main_proof.lines[line_number].formula)))
-# lemma_proof.statement.specialize(
-#     lemma_proof.statement.specialization_map(main_proof.statement))
-# new_rules = main_proof.rules.union(specialized.rules)
-# lines_to_add = [
-#     Proof.Line(line.formula, None if line.is_assumption() else line.rule,
-#                None if line.is_assumption() else [i + line_number for i in line.assumptions]) for
-#     line in specialized.lines]
-# new_lines = main_proof.lines[:]
-# new_lines = new_lines[line_number:line_number] = lines_to_add
-# return Proof(main_proof.statement, new_rules, new_lines)
-
-
 def inline_proof(main_proof: Proof, lemma_proof: Proof) -> Proof:
     """Inlines the given proof of a "lemma" inference rule into the given proof
     that uses that "lemma" rule, eliminating all usages of (any specialization
@@ -542,3 +525,10 @@ def inline_proof(main_proof: Proof, lemma_proof: Proof) -> Proof:
         `lemma_proof`.
     """
     # Task 5.2b
+    i = 0
+    while (i < len(main_proof.lines)):
+        line = main_proof.lines[i]
+        if (not line.is_assumption()) and line.rule.is_specialization_of(lemma_proof.statement):
+            main_proof = inline_proof_once(main_proof, i, lemma_proof)
+        i = i + 1
+    return Proof(main_proof.statement, main_proof.rules.difference({lemma_proof.statement}), main_proof.lines)
