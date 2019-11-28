@@ -430,6 +430,14 @@ def prove_specialization(proof: Proof, specialization: InferenceRule) -> Proof:
     assert proof.is_valid()
     assert specialization.is_specialization_of(proof.statement)
     # Task 5.1
+    spec_map = proof.statement.specialization_map(specialization)
+    lines = [
+        Proof.Line(line.formula.substitute_variables(spec_map),
+                   None if line.is_assumption() else line.rule,
+                   None if line.is_assumption() else line.assumptions)
+        for
+        line in proof.lines]
+    return Proof(specialization, proof.rules, lines)
 
 
 def inline_proof_once(main_proof: Proof, line_number: int, lemma_proof: Proof) \
@@ -459,6 +467,60 @@ def inline_proof_once(main_proof: Proof, line_number: int, lemma_proof: Proof) \
     assert main_proof.lines[line_number].rule == lemma_proof.statement
     assert lemma_proof.is_valid()
     # Task 5.2a
+    rules = main_proof.rules.union(lemma_proof.rules)
+    lines_a = main_proof.lines[:line_number]
+
+    specialized = prove_specialization(lemma_proof, main_proof.rule_for_line(line_number))
+    lines_b = []
+    lemma_line = main_proof.lines[line_number]
+    i = 0
+    for line in specialized.lines:
+        formula = line.formula
+        if line.is_assumption():
+            if formula not in main_proof.statement.assumptions:
+                r = 0
+                for assum in lemma_line.rule.assumptions:
+                    if InferenceRule.formula_specialization_map(assum, formula):
+                        break
+                    r += 1
+                # idx = lemma_line.rule.assumptions.index(formula)
+                new_line = main_proof.lines[lemma_line.assumptions[r]]
+                i += 1
+                rule, assumptions = new_line.rule, new_line.assumptions
+            else:
+                rule, assumptions = None, None
+        else:
+            rule, assumptions = line.rule, [k + line_number for k in line.assumptions]
+
+        lines_b.append(Proof.Line(formula, rule, assumptions))
+
+    lines_c = []
+    for line in main_proof.lines[line_number + 1:]:
+        if line.is_assumption():
+            rule, assumptions = None, None
+        else:
+            rule = line.rule
+            assumptions = [i + len(lemma_proof.lines) - 1 if i >= line_number else i for i in line.assumptions]
+        lines_c.append(Proof.Line(line.formula, rule, assumptions))
+    lines = tuple(lines_a) + tuple(lines_b) + tuple(lines_c)
+    return Proof(main_proof.statement, rules, lines)
+
+
+#
+#
+# specialized = prove_specialization(lemma_proof, lemma_proof.statement.specialize(
+#     InferenceRule.formula_specialization_map(
+#         lemma_proof.statement.conclusion, main_proof.lines[line_number].formula)))
+# lemma_proof.statement.specialize(
+#     lemma_proof.statement.specialization_map(main_proof.statement))
+# new_rules = main_proof.rules.union(specialized.rules)
+# lines_to_add = [
+#     Proof.Line(line.formula, None if line.is_assumption() else line.rule,
+#                None if line.is_assumption() else [i + line_number for i in line.assumptions]) for
+#     line in specialized.lines]
+# new_lines = main_proof.lines[:]
+# new_lines = new_lines[line_number:line_number] = lines_to_add
+# return Proof(main_proof.statement, new_rules, new_lines)
 
 
 def inline_proof(main_proof: Proof, lemma_proof: Proof) -> Proof:
