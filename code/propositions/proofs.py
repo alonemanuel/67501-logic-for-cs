@@ -470,6 +470,7 @@ def inline_proof_once(main_proof: Proof, line_number: int, lemma_proof: Proof) \
     rules = main_proof.rules.union(lemma_proof.rules)
     lines_a = main_proof.lines[:line_number]
 
+    # specialized proof for the lemma to the main proof
     specialized = prove_specialization(lemma_proof, main_proof.rule_for_line(line_number))
     lines_b = []
     lemma_line = main_proof.lines[line_number]
@@ -478,12 +479,18 @@ def inline_proof_once(main_proof: Proof, line_number: int, lemma_proof: Proof) \
         formula = line.formula
         if line.is_assumption():
             if formula not in main_proof.statement.assumptions:
+                # That is, 'line' is an assumption of the lemma (which came from a real line in main_proof)
+
+                specialized_assumps = lemma_line.rule.specialize(
+                    lemma_line.rule.specialization_map(main_proof.rule_for_line(line_number))).assumptions
+
                 r = 0
-                for assum in lemma_line.rule.assumptions:
-                    if InferenceRule.formula_specialization_map(assum, formula):
+                for assum in specialized_assumps:
+                # for assum in lemma_line.rule.assumptions:
+                    if assum == formula:
+                        # if InferenceRule.formula_specialization_map(assum, formula):
                         break
                     r += 1
-                # idx = lemma_line.rule.assumptions.index(formula)
                 new_line = main_proof.lines[lemma_line.assumptions[r]]
                 i += 1
                 rule, assumptions = new_line.rule, new_line.assumptions

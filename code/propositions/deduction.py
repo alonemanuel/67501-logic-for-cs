@@ -118,6 +118,74 @@ def remove_assumption(proof: Proof) -> Proof:
     for rule in proof.rules:
         assert rule == MP or len(rule.assumptions) == 0
     # Task 5.4
+    antecedent = proof.statement.assumptions[-1]
+    consequent = proof.statement.conclusion
+    statement = InferenceRule(proof.statement.assumptions[:-1], Formula(IMPLIES, antecedent, consequent))
+    rules = proof.rules.union({MP, I0, I1, D})
+    lines = []
+
+    for line in proof.lines:
+        formula = line.formula
+        if formula == antecedent:
+            _deduction_I0(lines, antecedent, line)
+        elif line.is_assumption():
+            _deduction_assump(lines, antecedent, line)
+        elif line.assumptions:
+            _deduction_MP(lines, antecedent, line)
+        elif not line.assumptions:
+            _deduction_other(lines, antecedent, line)
+
+    return Proof(statement, rules, lines)
+
+
+def _deduction_MP(lines, antedecent, line):
+    lr = lines[line.assumptions[1]]
+    l = lr.first
+    r = lr.second
+    formula_D_l = Formula(IMPLIES, antedecent, l)
+    formula_D_r = Formula(IMPLIES, antedecent, r)
+    formula_MP = Formula(IMPLIES, formula_D_l, formula_D_r)
+    formula_D = Formula(IMPLIES, antedecent, Formula(IMPLIES, l, r))
+
+    line_D = Proof.Line(formula_D, D, [])
+    line_MP = Proof.Line(formula_MP, MP, [len(lines) - 3, len(lines) - 2])
+
+    formula_new = Formula(IMPLIES, antedecent, line.formula)
+    line_new = Proof.Line(formula_new, MP, [len(lines) - 4, len(lines) - 1])
+
+    lines += [line_D, line_MP, line_new]
+
+
+def _deduction_other(lines, antecedent, line):
+    line_orig = line
+
+    formula_D_l = line.formula
+    formula_D_r = Formula(IMPLIES, antecedent, line.formula)
+    formula_D = Formula(IMPLIES, formula_D_l, formula_D_r)
+    line_D = Proof.Line(formula_D, D, [])
+
+    formula_MP = Formula(IMPLIES, antecedent, line.formula)
+    line_MP = Proof.Line(formula_MP, MP, [len(lines) - 2, len(lines) - 1])
+
+    lines += [line_orig, line_D, line_MP]
+
+
+def _deduction_assump(lines, antecendent, line):
+    line_orig = line
+
+    formula_I1 = Formula(IMPLIES, line.formula, Formula(IMPLIES, antecendent, line.formula))
+    line_I1 = Proof.Line(formula_I1, I1, [])
+
+    formula = Formula(IMPLIES, antecendent, line.formula)
+    new_line = Proof.Line(formula, MP, [len(lines) - 2, len(lines) - 1])
+
+    lines += [line_orig, line_I1, new_line]
+
+
+def _deduction_I0(lines, antecendent, line):
+    formula = Formula(IMPLIES, antecendent, line.formula)
+    new_line = Proof.Line(formula, I0, [])
+    lines.append(new_line)
 
 
 def proof_from_inconsistency(proof_of_affirmation: Proof,
