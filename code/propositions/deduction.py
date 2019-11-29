@@ -77,6 +77,20 @@ def combine_proofs(antecedent1_proof: Proof, antecedent2_proof: Proof,
                     Formula('->', antecedent2_proof.statement.conclusion, consequent))
     ).is_specialization_of(double_conditional)
     # Task 5.3b
+    statement = InferenceRule(antecedent1_proof.statement.assumptions, consequent)
+    rules = antecedent1_proof.rules.union({double_conditional, MP})
+    lines = [line for line in antecedent1_proof.lines]
+    lines.append(Proof.Line(Formula(IMPLIES, antecedent1_proof.statement.conclusion,
+                                    Formula(IMPLIES, antecedent2_proof.statement.conclusion, consequent)),
+                            double_conditional, []))
+    line_number = len(lines) - 1
+    f2 = Formula(IMPLIES, antecedent2_proof.statement.conclusion, consequent)
+    lines += [Proof.Line(line.formula, None if line.is_assumption() else line.rule,
+                         None if line.is_assumption() else [i + len(lines) for i in line.assumptions]) for line in
+              antecedent2_proof.lines]
+    lines.append(Proof.Line(f2, MP, [line_number - 1, line_number]))
+    lines.append(Proof.Line(consequent, MP, [len(lines) - 2, len(lines) - 1]))
+    return Proof(statement, rules, lines)
 
 
 def remove_assumption(proof: Proof) -> Proof:
