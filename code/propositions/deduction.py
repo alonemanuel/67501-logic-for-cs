@@ -9,6 +9,7 @@ from propositions.syntax import *
 from propositions.proofs import *
 from propositions.axiomatic_systems import *
 
+
 def prove_corollary(antecedent_proof: Proof, consequent: Formula,
                     conditional: InferenceRule) -> Proof:
     """Converts the given proof of a formula `antecedent` into a proof of the
@@ -34,6 +35,13 @@ def prove_corollary(antecedent_proof: Proof, consequent: Formula,
                          Formula('->', antecedent_proof.statement.conclusion,
                                  consequent)).is_specialization_of(conditional)
     # Task 5.3a
+    statement = InferenceRule(antecedent_proof.statement.assumptions, consequent)
+    rules = antecedent_proof.rules.union({MP, conditional})
+    lines = [line for line in antecedent_proof.lines]
+    lines.append(Proof.Line(Formula('->', antecedent_proof.statement.conclusion, consequent), conditional, []))
+    lines.append(Proof.Line(consequent, MP, [len(lines) - 2, len(lines) - 1]))
+    return Proof(statement, rules, lines)
+
 
 def combine_proofs(antecedent1_proof: Proof, antecedent2_proof: Proof,
                    consequent: Formula, double_conditional: InferenceRule) -> \
@@ -66,9 +74,10 @@ def combine_proofs(antecedent1_proof: Proof, antecedent2_proof: Proof,
     assert antecedent1_proof.rules == antecedent2_proof.rules
     assert InferenceRule(
         [], Formula('->', antecedent1_proof.statement.conclusion,
-        Formula('->', antecedent2_proof.statement.conclusion, consequent))
-        ).is_specialization_of(double_conditional)
+                    Formula('->', antecedent2_proof.statement.conclusion, consequent))
+    ).is_specialization_of(double_conditional)
     # Task 5.3b
+
 
 def remove_assumption(proof: Proof) -> Proof:
     """Converts a proof of some `conclusion` formula, the last assumption of
@@ -89,12 +98,13 @@ def remove_assumption(proof: Proof) -> Proof:
         `~propositions.axiomatic_systems.I0`,
         `~propositions.axiomatic_systems.I1`, and
         `~propositions.axiomatic_systems.D`.
-    """        
+    """
     assert proof.is_valid()
     assert len(proof.statement.assumptions) > 0
     for rule in proof.rules:
         assert rule == MP or len(rule.assumptions) == 0
     # Task 5.4
+
 
 def proof_from_inconsistency(proof_of_affirmation: Proof,
                              proof_of_negation: Proof, conclusion: Formula) -> \
@@ -121,6 +131,7 @@ def proof_from_inconsistency(proof_of_affirmation: Proof,
            proof_of_negation.statement.conclusion
     assert proof_of_affirmation.rules == proof_of_negation.rules
     # Task 5.6
+
 
 def prove_by_contradiction(proof: Proof) -> Proof:
     """Converts the given proof of ``'~(p->p)'``, the last assumption of which
