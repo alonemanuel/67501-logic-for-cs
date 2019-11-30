@@ -157,19 +157,6 @@ def _deduction_MP(lines, antedecent, line, lut):
     line_new = Proof.Line(formula_new, MP, [lut[line.assumptions[0]], len(lines) - 1])
     lines.append(line_new)
 
-    #
-    #
-    #
-    # formula_D_l = Formula(IMPLIES, antedecent, l)
-    # formula_D_r = Formula(IMPLIES, antedecent, r)
-    # formula_MP = Formula(IMPLIES, formula_D_l, formula_D_r)
-    # formula_D = Formula(IMPLIES, antedecent, Formula(IMPLIES, l, r))
-    #
-    # line_D = Proof.Line(formula_D, D, [])
-    # line_MP = Proof.Line(formula_MP, MP, [len(lines) - 3, len(lines) - 2])
-    #
-    #
-    # lines += [line_D, line_MP, line_new]
 
 
 def _deduction_other(lines, antecedent, line):
@@ -185,27 +172,20 @@ def _deduction_other(lines, antecedent, line):
     line_MP = Proof.Line(formula_I1_r, MP, [len(lines) - 2, len(lines) - 1])
     lines.append(line_MP)
     return 2
-    # formula_D_l = line.formula
-    # formula_D_r = Formula(IMPLIES, antecedent, line.formula)
-    # formula_D = Formula(IMPLIES, formula_D_l, formula_D_r)
-    # line_D = Proof.Line(formula_D, D, [])
-    #
-    # formula_MP = Formula(IMPLIES, antecedent, line.formula)
-    # line_MP = Proof.Line(formula_MP, MP, [len(lines) - 2, len(lines) - 1])
-    #
-    # lines += [line_orig, line_D, line_MP]
 
 
 def _deduction_assump(lines, antecendent, line):
     line_orig = line
+    lines.append(line_orig)
 
     formula_I1 = Formula(IMPLIES, line.formula, Formula(IMPLIES, antecendent, line.formula))
     line_I1 = Proof.Line(formula_I1, I1, [])
+    lines.append(line_I1)
 
     formula = Formula(IMPLIES, antecendent, line.formula)
     new_line = Proof.Line(formula, MP, [len(lines) - 2, len(lines) - 1])
+    lines.append(new_line)
 
-    lines += [line_orig, line_I1, new_line]
     return 2
 
 
@@ -271,3 +251,28 @@ def prove_by_contradiction(proof: Proof) -> Proof:
     for rule in proof.rules:
         assert rule == MP or len(rule.assumptions) == 0
     # Task 5.7
+    formula = proof.statement.assumptions[-1].first
+    statement = InferenceRule(proof.statement.assumptions[:-1], formula)
+    rules = proof.rules.union({MP, I0, I1, D, N})
+    lines = []
+
+    proof_removed = remove_assumption(proof)
+    lines = [line for line in proof_removed.lines]
+
+    f_l = Formula(IMPLIES, Formula(NEG, formula), proof.statement.conclusion)
+    f_r = Formula(IMPLIES, proof.statement.conclusion.first, formula)
+    f = Formula(IMPLIES, f_l, f_r)
+    l = Proof.Line(f, N, [])
+    lines.append(l)
+
+    f_I0 = proof.statement.conclusion.first
+    l_I0 = Proof.Line(f_I0, I0, [])
+    lines.append(l_I0)
+
+    l_MP = Proof.Line(f_r, MP, [len(lines) - 3, len(lines) - 2])
+    lines.append(l_MP)
+
+    l_MP2 = Proof.Line(formula, MP, [len(lines) - 2, len(lines) - 1])
+    lines.append(l_MP2)
+
+    return Proof(statement, rules, lines)
