@@ -16,6 +16,7 @@ from propositions.semantics import *
 from propositions.operators import *
 from propositions.axiomatic_systems import *
 
+
 def formulae_capturing_model(model: Model) -> List[Formula]:
     """Computes the formulae that capture the given model: ``'``\ `x`\ ``'``
     for each variable `x` that is assigned the value ``True`` in the given
@@ -35,8 +36,12 @@ def formulae_capturing_model(model: Model) -> List[Formula]:
     """
     assert is_model(model)
     # Task 6.1a
+    vars = list(model.keys())
+    vars.sort()
+    return [Formula(var) if model[var] else Formula(NEG, Formula(var)) for var in vars]
 
-def prove_in_model(formula: Formula, model:Model) -> Proof:
+
+def prove_in_model(formula: Formula, model: Model) -> Proof:
     """Either proves the given formula or proves its negation, from the formulae
     that capture the given model.
 
@@ -55,6 +60,14 @@ def prove_in_model(formula: Formula, model:Model) -> Proof:
     assert formula.operators().issubset({'->', '~'})
     assert is_model(model)
     # Task 6.1b
+    eval = evaluate(formula, model)
+    statement = formula if eval else Formula(NEG, formula)
+    assumptions = formulae_capturing_model(model)
+    rules = AXIOMATIC_SYSTEM
+    lines=[]
+
+    if 
+
 
 def reduce_assumption(proof_from_affirmation: Proof,
                       proof_from_negation: Proof) -> Proof:
@@ -98,6 +111,7 @@ def reduce_assumption(proof_from_affirmation: Proof,
     assert proof_from_affirmation.rules == proof_from_negation.rules
     # Task 6.2
 
+
 def prove_tautology(tautology: Formula, model: Model = frozendict()) -> Proof:
     """Proves the given tautology from the formulae that capture the given
     model.
@@ -125,6 +139,7 @@ def prove_tautology(tautology: Formula, model: Model = frozendict()) -> Proof:
     assert sorted(tautology.variables())[:len(model)] == sorted(model.keys())
     # Task 6.3a
 
+
 def proof_or_counterexample(formula: Formula) -> Union[Proof, Model]:
     """Either proves the given formula or finds a model in which it does not
     hold.
@@ -140,6 +155,7 @@ def proof_or_counterexample(formula: Formula) -> Union[Proof, Model]:
     """
     assert formula.operators().issubset({'->', '~'})
     # Task 6.3b
+
 
 def encode_as_formula(rule: InferenceRule) -> Formula:
     """Encodes the given inference rule as a formula consisting of a chain of
@@ -161,6 +177,7 @@ def encode_as_formula(rule: InferenceRule) -> Formula:
     """
     # Task 6.4a
 
+
 def prove_sound_inference(rule: InferenceRule) -> Proof:
     """Proves the given sound inference rule.
 
@@ -176,6 +193,7 @@ def prove_sound_inference(rule: InferenceRule) -> Proof:
     for formula in rule.assumptions + (rule.conclusion,):
         assert formula.operators().issubset({'->', '~'})
     # Task 6.4b
+
 
 def model_or_inconsistency(formulae: List[Formula]) -> Union[Model, Proof]:
     """Either finds a model in which all the given formulae hold, or proves
@@ -193,6 +211,7 @@ def model_or_inconsistency(formulae: List[Formula]) -> Union[Model, Proof]:
     for formula in formulae:
         assert formula.operators().issubset({'->', '~'})
     # Task 6.5
+
 
 def prove_in_model_full(formula: Formula, model: Model) -> Proof:
     """Either proves the given formula or proves its negation, from the formulae
