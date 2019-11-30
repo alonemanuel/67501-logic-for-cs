@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c648b4e7-2b3e-47c0-85a2-2371ca91d22d" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/propositions/deduction.py" beforeDir="false" afterPath="$PROJECT_DIR$/propositions/deduction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/propositions/some_proofs.py" beforeDir="false" afterPath="$PROJECT_DIR$/propositions/some_proofs.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test_ex5.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_ex5.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -13,15 +13,24 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/propositions/deduction.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="219">
+            <state relative-caret-position="483">
               <caret line="156" column="66" selection-start-line="156" selection-start-column="66" selection-end-line="156" selection-end-column="66" />
               <folding>
                 <element signature="e#215#248#0" expanded="true" />
                 <element signature="e#1683#2723#1" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/propositions/some_proofs.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="221">
+              <caret line="113" column="30" selection-start-line="113" selection-start-column="30" selection-end-line="113" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -41,17 +50,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/propositions/deduction_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="721">
-              <caret line="205" selection-start-line="205" selection-end-line="205" />
+            <state relative-caret-position="221">
+              <caret line="235" selection-start-line="235" selection-end-line="235" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test_ex5.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="190">
-              <caret line="42" column="16" lean-forward="true" selection-start-line="42" selection-start-column="16" selection-end-line="42" selection-end-column="16" />
+            <state relative-caret-position="527">
+              <caret line="43" selection-start-line="43" selection-end-line="43" />
             </state>
           </provider>
         </entry>
@@ -75,8 +84,9 @@
         <option value="$PROJECT_DIR$/propositions/proofs_test.py" />
         <option value="$PROJECT_DIR$/propositions/deduction_test.py" />
         <option value="$PROJECT_DIR$/propositions/proofs.py" />
-        <option value="$PROJECT_DIR$/test_ex5.py" />
         <option value="$PROJECT_DIR$/propositions/deduction.py" />
+        <option value="$PROJECT_DIR$/test_ex5.py" />
+        <option value="$PROJECT_DIR$/propositions/some_proofs.py" />
       </list>
     </option>
   </component>
@@ -137,7 +147,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -292,12 +302,12 @@
       <workItem from="1573223684218" duration="9122000" />
       <workItem from="1573244210427" duration="10121000" />
       <workItem from="1574870640379" duration="99000" />
-      <workItem from="1574870760996" duration="34995000" />
+      <workItem from="1574870760996" duration="38014000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="81371000" />
+    <option name="totallyTimeSpent" value="84390000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1549" height="877" extended-state="6" />
@@ -308,7 +318,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Debug" order="2" visible="true" weight="0.4973262" />
+      <window_info anchor="bottom" id="Debug" order="2" visible="true" weight="0.04946524" />
       <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="5" />
@@ -366,7 +376,7 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/code$test_ex5.coverage" NAME="test_ex5 Coverage Results" MODIFIED="1575069357849" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/code$test_ex5.coverage" NAME="test_ex5 Coverage Results" MODIFIED="1575075712091" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/code$test_ex2.coverage" NAME="test_ex2 Coverage Results" MODIFIED="1573241916291" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/code$test_ex0.coverage" NAME="test_ex0 Coverage Results" MODIFIED="1572367949797" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/code$test_ex3.coverage" NAME="test_ex3 Coverage Results" MODIFIED="1573263404727" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -495,11 +505,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/propositions/some_proofs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1020" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/propositions/proofs.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="486">
@@ -510,28 +515,35 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test_ex5.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="42" column="16" lean-forward="true" selection-start-line="42" selection-start-column="16" selection-end-line="42" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/propositions/deduction_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="721">
-          <caret line="205" selection-start-line="205" selection-end-line="205" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/propositions/deduction.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
+        <state relative-caret-position="483">
           <caret line="156" column="66" selection-start-line="156" selection-start-column="66" selection-end-line="156" selection-end-column="66" />
           <folding>
             <element signature="e#215#248#0" expanded="true" />
             <element signature="e#1683#2723#1" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/propositions/some_proofs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="113" column="30" selection-start-line="113" selection-start-column="30" selection-end-line="113" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/propositions/deduction_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="235" selection-start-line="235" selection-end-line="235" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_ex5.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="43" selection-start-line="43" selection-end-line="43" />
         </state>
       </provider>
     </entry>

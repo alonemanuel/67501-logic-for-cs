@@ -100,7 +100,33 @@ def prove_hypothetical_syllogism() -> Proof:
         `~propositions.axiomatic_systems.D`.
     """
     # Task 5.5
+    statement = HS
+    rules = {MP, I0, I1, D}
+    lines = []
+    f0 = Formula.parse('(p->p)')
+    lines.append(Proof.Line(f0, I0, []))
+    f1 = Formula.parse('(p->q)')
+    lines.append(Proof.Line(f1))
+    f2 = Formula.parse('((p->q)->(p->(p->q)))')
+    lines.append(Proof.Line(f2, I1, []))
+    f3 = Formula.parse('(p->(p->q))')
+    lines.append(Proof.Line(f3, MP, [1, 2]))
+    f4 = Formula.parse('(p->q)')
+    lines.append(Proof.Line(f4))
+    f5 = Formula.parse('(q->r)')
+    lines.append(Proof.Line(f5))
+    f6 = Formula.parse('((q->r)->(p->(q->r)))')
+    lines.append(Proof.Line(f6, I1, []))
+    f7 = Formula.parse('(p->(q->r))')
+    lines.append(Proof.Line(f7, MP, [5, 6]))
+    f8 = Formula.parse('((p->(q->r))->((p->q)->(p->r)))')
+    lines.append(Proof.Line(f8, D, []))
+    f9 = Formula.parse('((p->q)->(p->r))')
+    lines.append(Proof.Line(f9, MP, [7, 8]))
+    f10 = Formula.parse('(p->r)')
 
+    lines.append(Proof.Line(f10, MP, [4, 9]))
+    return Proof(statement, rules, lines)
 
 def prove_I2() -> Proof:
     """Proves `~propositions.axiomatic_systems.I2` via
