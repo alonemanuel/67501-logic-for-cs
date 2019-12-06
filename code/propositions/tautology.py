@@ -175,6 +175,15 @@ def reduce_assumption(proof_from_affirmation: Proof,
            proof_from_negation.statement.assumptions[-1]
     assert proof_from_affirmation.rules == proof_from_negation.rules
     # Task 6.2
+    affirmation = proof_from_affirmation.statement.assumptions[-1]
+    negation = proof_from_negation.statement.assumptions[-1]
+    affirmation_p = remove_assumption(proof_from_affirmation)
+    statement = proof_from_negation.statement
+    negation_p = remove_assumption(proof_from_negation)
+    # f = Formula.parse(f'(({affirmation}->{statement})->(({negation}->{statement})->{statement}))')
+    # l = Proof.Line(f, R)
+    p = combine_proofs(affirmation_p, negation_p, statement.conclusion, R)
+    return p
 
 
 def prove_tautology(tautology: Formula, model: Model = frozendict()) -> Proof:
