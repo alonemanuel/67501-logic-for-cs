@@ -60,13 +60,78 @@ def prove_in_model(formula: Formula, model: Model) -> Proof:
     assert formula.operators().issubset({'->', '~'})
     assert is_model(model)
     # Task 6.1b
-    eval = evaluate(formula, model)
-    statement = formula if eval else Formula(NEG, formula)
-    assumptions = formulae_capturing_model(model)
-    rules = AXIOMATIC_SYSTEM
-    lines=[]
 
-    if 
+    if is_variable(formula.root):
+        return _prove_var(formula, model)
+    elif is_unary(formula.root):
+        return _prove_neg(formula, model)
+    elif is_binary(formula.root) and formula.root == IMPLIES:
+        return _prove_implies(formula, model)
+
+
+def _get_proof_elements(formula, model):
+    eval = evaluate(formula, model)
+    conclusion = formula if eval else Formula(NEG, formula)
+    assumptions = formulae_capturing_model(model)
+    statement = InferenceRule(assumptions, conclusion)
+    rules = AXIOMATIC_SYSTEM
+    return eval, conclusion, statement, rules
+
+
+def _prove_var(formula, model):
+    eval, conclusion, statement, rules = _get_proof_elements(formula, model)
+    f = conclusion
+    lines = []
+    l = Proof.Line(f)
+    lines.append(l)
+    p = Proof(statement, rules, lines)
+    return p
+
+
+def _prove_neg(formula, model):
+    eval, conclusion, statement, rules = _get_proof_elements(formula, model)
+    f = formula.first
+    p = prove_in_model(f, model)
+    if eval:
+        return p
+    else:
+        lines = p.lines
+        f0 = Formula(IMPLIES, f, conclusion)
+        l0 = Proof.Line(f0, NN, [])
+        lines += (l0,)
+        f1 = conclusion
+        l1 = Proof.Line(f1, MP, [len(lines) - 2, len(lines) - 1])
+        lines += (l1,)
+        return Proof(statement, rules, lines)
+
+
+def _prove_implies(formula, model):
+    eval, conclusion, statement, rules = _get_proof_elements(formula, model)
+    precedent, consequent = formula.first, formula.second
+    if eval:
+        if not evaluate(precedent, model):
+            p = prove_in_model(precedent, model)
+            lines = p.lines
+            f0 = Formula.parse(f'(~{precedent}->{conclusion})')
+            l0 = Proof.Line(f0, I2, [])
+
+        else:
+            p = prove_in_model(consequent, model)
+            lines = p.lines
+            f0 = Formula.parse(f'({consequent}->{conclusion})')
+            l0 = Proof.Line(f0, I1, [])
+        lines += (l0,)
+        f1 = conclusion
+        l1 = Proof.Line(f1, MP, [len(lines) - 2, len(lines) - 1])
+        lines += (l1,)
+        return Proof(statement, rules, lines)
+
+    else:
+        p_prec = prove_in_model(precedent, model)
+        neg_cons = Formula(NEG, consequent)
+        p_cons = prove_in_model(neg_cons, model)
+        proof = combine_proofs(p_prec, p_cons, conclusion, NI)
+        return proof
 
 
 def reduce_assumption(proof_from_affirmation: Proof,
