@@ -311,6 +311,23 @@ def prove_sound_inference(rule: InferenceRule) -> Proof:
     for formula in rule.assumptions + (rule.conclusion,):
         assert formula.operators().issubset({'->', '~'})
     # Task 6.4b
+    statement = rule
+    rules = AXIOMATIC_SYSTEM
+    lines = []
+    for assump in rule.assumptions:
+        lines.append(Proof.Line(assump))
+
+    encoded_formula = encode_as_formula(rule)
+    p = prove_tautology(encoded_formula)
+    lines += [Proof.Line(line.formula, line.rule, [i + len(lines) for i in line.assumptions]) for line in p.lines]
+    curr_formula = encoded_formula
+    for i, assump in enumerate(rule.assumptions):
+        f = curr_formula.second
+        l = Proof.Line(f, MP, [i, len(lines) - 1])
+        lines.append(l)
+        curr_formula = f
+
+    return Proof(statement, rules, lines)
 
 
 def model_or_inconsistency(formulae: List[Formula]) -> Union[Model, Proof]:
