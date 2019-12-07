@@ -175,13 +175,9 @@ def reduce_assumption(proof_from_affirmation: Proof,
            proof_from_negation.statement.assumptions[-1]
     assert proof_from_affirmation.rules == proof_from_negation.rules
     # Task 6.2
-    affirmation = proof_from_affirmation.statement.assumptions[-1]
-    negation = proof_from_negation.statement.assumptions[-1]
     affirmation_p = remove_assumption(proof_from_affirmation)
     statement = proof_from_negation.statement
     negation_p = remove_assumption(proof_from_negation)
-    # f = Formula.parse(f'(({affirmation}->{statement})->(({negation}->{statement})->{statement}))')
-    # l = Proof.Line(f, R)
     p = combine_proofs(affirmation_p, negation_p, statement.conclusion, R)
     return p
 
@@ -212,6 +208,35 @@ def prove_tautology(tautology: Formula, model: Model = frozendict()) -> Proof:
     assert is_model(model)
     assert sorted(tautology.variables())[:len(model)] == sorted(model.keys())
     # Task 6.3a
+    len_model, len_formula = len(model), len(tautology.variables())
+    if len_model == len_formula:
+        return _prove_full_model(tautology, model)
+    elif len_model == len_formula - 1:
+        return _prove_one_less(tautology, model)
+    elif len_model < len_formula - 1:
+        return _prove_missing_model(tautology, model)
+
+
+def _prove_missing_model(tautology, model):
+    var = sorted(tautology.variables())[len(model)]
+    m_affirmation, m_negation = dict(model), dict(model)
+    m_affirmation[var], m_negation[var] = True, False
+    p_affirmation = prove_tautology(tautology, m_affirmation)
+    p_negation = prove_tautology(tautology, m_negation)
+    return reduce_assumption(p_affirmation, p_negation)
+
+
+def _prove_one_less(tautology, model):
+    var = sorted(tautology.variables())[len(model)]
+    m_affirmation, m_negation = dict(model), dict(model)
+    m_affirmation[var], m_negation[var] = True, False
+    p_affirmation = prove_in_model(tautology, m_affirmation)
+    p_negation = prove_in_model(tautology, m_negation)
+    return reduce_assumption(p_affirmation, p_negation)
+
+
+def _prove_full_model(tautology, model):
+    return prove_in_model(tautology, model)
 
 
 def proof_or_counterexample(formula: Formula) -> Union[Proof, Model]:
