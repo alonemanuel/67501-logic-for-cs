@@ -254,7 +254,6 @@ def prove_by_contradiction(proof: Proof) -> Proof:
     formula = proof.statement.assumptions[-1].first
     statement = InferenceRule(proof.statement.assumptions[:-1], formula)
     rules = proof.rules.union({MP, I0, I1, D, N})
-    lines = []
 
     proof_removed = remove_assumption(proof)
     lines = [line for line in proof_removed.lines]

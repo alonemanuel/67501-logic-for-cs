@@ -346,6 +346,20 @@ def model_or_inconsistency(formulae: List[Formula]) -> Union[Model, Proof]:
     for formula in formulae:
         assert formula.operators().issubset({'->', '~'})
     # Task 6.5
+    vars = []
+    for formula in formulae:
+        vars += formula.variables()
+    for model in all_models(vars):
+        for formula in formulae:
+            if not evaluate(formula, model):
+                break
+        else:
+            return model
+    else:
+        rule = InferenceRule(formulae, Formula.parse('~(p->p)'))
+        return prove_sound_inference(rule)
+
+
 
 
 def prove_in_model_full(formula: Formula, model: Model) -> Proof:
