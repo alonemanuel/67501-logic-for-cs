@@ -254,6 +254,15 @@ def proof_or_counterexample(formula: Formula) -> Union[Proof, Model]:
     """
     assert formula.operators().issubset({'->', '~'})
     # Task 6.3b
+    if is_tautology(formula):
+        return prove_tautology(formula, dict())
+    else:
+        return _find_counter_example(formula)
+
+def _find_counter_example(formula):
+    for model in all_models(formula.variables()):
+        if not evaluate(formula,model):
+            return model
 
 
 def encode_as_formula(rule: InferenceRule) -> Formula:
