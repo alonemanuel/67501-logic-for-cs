@@ -259,9 +259,10 @@ def proof_or_counterexample(formula: Formula) -> Union[Proof, Model]:
     else:
         return _find_counter_example(formula)
 
+
 def _find_counter_example(formula):
     for model in all_models(formula.variables()):
-        if not evaluate(formula,model):
+        if not evaluate(formula, model):
             return model
 
 
@@ -284,6 +285,15 @@ def encode_as_formula(rule: InferenceRule) -> Formula:
         q
     """
     # Task 6.4a
+    if len(rule.assumptions) == 0:
+        return rule.conclusion
+    elif len(rule.assumptions) == 1:
+        return Formula(IMPLIES, rule.assumptions[0], rule.conclusion)
+    else:
+        assump = rule.assumptions[0]
+        reduced_rule = InferenceRule(rule.assumptions[1:], rule.conclusion)
+        reduced_formula = encode_as_formula(reduced_rule)
+        return Formula(IMPLIES, assump, reduced_formula)
 
 
 def prove_sound_inference(rule: InferenceRule) -> Proof:
