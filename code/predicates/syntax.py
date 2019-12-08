@@ -394,9 +394,22 @@ class Formula:
         Returns:
             The standard string representation of the current formula.
         """
-
-
     # Task 7.2
+        if is_constant(self.root) or is_variable(self.root):
+            return self.root
+        elif is_unary(self.root):
+            return f'~{str(self.first)}'
+        elif is_binary(self.root):
+            return f'({str(self.first)}->{str(self.second)})'
+        elif is_equality(self.root):
+            return f'{str(self.arguments[0])}={str(self.arguments[1])}'
+        elif is_relation(self.root):
+            repr = f'{self.root}({str(self.arguments[0])}'
+            for arg in self.arguments[1:]:
+                repr += f',{str(arg)}'
+            return f'{repr})'
+        elif is_quantifier(self.root):
+            return f'{str(self.root)}{str(self.variable)}[{str(self.predicate)}]'
 
     def __eq__(self, other: object) -> bool:
         """Compares the current formula with the given one.
