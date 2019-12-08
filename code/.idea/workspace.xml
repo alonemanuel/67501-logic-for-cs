@@ -186,7 +186,7 @@
       <workItem from="1574870760996" duration="43744000" />
       <workItem from="1575651632391" duration="20969000" />
       <workItem from="1575824493189" duration="2464000" />
-      <workItem from="1575826973381" duration="4499000" />
+      <workItem from="1575826973381" duration="8298000" />
     </task>
     <servers />
   </component>
@@ -237,8 +237,8 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/predicates/syntax.py</url>
-          <line>180</line>
-          <option name="timeStamp" value="55" />
+          <line>521</line>
+          <option name="timeStamp" value="62" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -250,7 +250,7 @@
     <SUITE FILE_PATH="coverage/code$test_ex0.coverage" NAME="test_ex0 Coverage Results" MODIFIED="1572367949797" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/code$prelim_test.coverage" NAME="prelim_test Coverage Results" MODIFIED="1572367883660" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/prelim" />
     <SUITE FILE_PATH="coverage/code$test_ex1.coverage" NAME="test_ex1 Coverage Results" MODIFIED="1572683238359" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/code$test_ex7.coverage" NAME="test_ex7 Coverage Results" MODIFIED="1575831472487" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/code$test_ex7.coverage" NAME="test_ex7 Coverage Results" MODIFIED="1575835264310" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/code$test_ex6.coverage" NAME="test_ex6 Coverage Results" MODIFIED="1575744084298" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

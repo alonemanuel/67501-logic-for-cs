@@ -219,8 +219,10 @@ class Term:
 			A term whose standard string representation is the given string.
 		"""
 
+		# Task 7.3.2
+		term, remainder = Term.parse_prefix(s)
+		return term
 
-	# Task 7.3.2
 
 	def constants(self) -> Set[str]:
 		"""Finds all constant names in the current term.
@@ -444,14 +446,20 @@ class Formula:
 		elif is_unary(self.root):
 			return f'~{str(self.first)}'
 		elif is_binary(self.root):
-			return f'({str(self.first)}->{str(self.second)})'
+			return f'({str(self.first)}{str(self.root)}{str(self.second)})'
 		elif is_equality(self.root):
 			return f'{str(self.arguments[0])}={str(self.arguments[1])}'
 		elif is_relation(self.root):
-			repr = f'{self.root}({str(self.arguments[0])}'
-			for arg in self.arguments[1:]:
-				repr += f',{str(arg)}'
-			return f'{repr})'
+			if self.arguments:
+				repr = f'{self.root}({str(self.arguments[0])}'
+				if self.arguments:
+					for arg in self.arguments[1:]:
+						repr += f',{str(arg)}'
+					return f'{repr})'
+			else:
+				return f'{self.root}()'
+
+
 		elif is_quantifier(self.root):
 			return f'{str(self.root)}{str(self.variable)}[{str(self.predicate)}]'
 
@@ -502,8 +510,61 @@ class Formula:
 			name (and not just a part of it, such as ``'x1'``).
 		"""
 
+		# Task 7.4.1
+		if is_quantifier(s[0]):
+			quantifier = s[0]
+			s = s[1:]
+			valid_prefix_regex = '[a-zA-Z0-9]*'
+			p = re.compile(valid_prefix_regex)
+			result = p.search(s)
+			# Means we found something that matches the pattern:
+			variable = result.group(0)
+			predicate, remainder = Formula.parse_prefix(s[len(variable) + 1:])
+			remainder = remainder[1:]
+			return Formula(quantifier, variable, predicate), remainder
 
-	# Task 7.4.1
+		# If the formula is of a binary operator, then it has to start with a '(':
+		elif s[0] == L_BRACK:
+			# ff and ff2 are the left and right hand sides of the formula, respectively
+			l_formula, remainder = Formula.parse_prefix(s[1:])
+			if is_binary(remainder[0]):
+				end_len = 1
+			elif is_binary(remainder[0:2]):
+				end_len = 2
+			root = remainder[:end_len]
+			r_formula, remainder = Formula.parse_prefix(remainder[end_len:])
+			remainder=remainder[1:]
+			return Formula(root, l_formula, r_formula), remainder
+
+		# If the formula is of a unary operator, then we only need to operate on the part that comes after the '~':
+		elif is_unary(s[0]):
+			formula, remainder = Formula.parse_prefix(s[1:])
+			return Formula(s[0], formula), remainder
+
+		# If the formula starts with 'F'...'T', then it's a relation (which is like the case of a function in "Term"),
+		# we'll   ---<==3, respectively
+		elif 'F' <= s[0] <= 'T':  # prefix is function
+			root, args, start_marker = '', [], 0
+			# finding the root of the function
+			for i, c in enumerate(s):
+				if c == L_BRACK:
+					root, start_marker = s[0:i], i + 1
+					break
+			if s[i+1] == R_BRACK:
+				return Formula(root, []), s[i+2:]
+			arg, remainder = Term.parse_prefix(s[start_marker:])
+			while remainder[0] == COMMA:
+				args.append(arg)
+				arg, remainder = Term.parse_prefix(remainder[1:])
+			args.append(arg)
+			return Formula(root, args), remainder[1:]
+
+		else:
+			l_formula, remainder = Term.parse_prefix(s)
+			root = remainder[0]
+			r_formula, remainder = Term.parse_prefix(remainder[1:])
+			return Formula(root, [l_formula, r_formula]), remainder
+
 
 	@staticmethod
 	def parse(s: str) -> Formula:
@@ -515,6 +576,8 @@ class Formula:
 		Returns:
 			A formula whose standard string representation is the given string.
 		"""
+		formula, remainder = Formula.parse_prefix(s)
+		return formula
 
 
 	# Task 7.4.2
