@@ -5,6 +5,7 @@
 
 """Semantic analysis of first-order logic constructs."""
 import functools
+import itertools
 from typing import AbstractSet, FrozenSet, Generic, Mapping, Tuple, TypeVar
 
 from logic_utils import frozen, frozendict
@@ -191,8 +192,8 @@ class Model(Generic[T]):
         elif is_unary(formula.root):
             return not self.evaluate_formula(formula.first, assignment)
         elif is_binary(formula.root):
-            l_eval = self.evaluate_formula(formula.first)
-            r_eval = self.evaluate_formula(formula.second)
+            l_eval = self.evaluate_formula(formula.first, assignment)
+            r_eval = self.evaluate_formula(formula.second, assignment)
             if formula.root == '&':
                 return l_eval and r_eval
             elif formula.root == '|':
@@ -229,3 +230,45 @@ class Model(Generic[T]):
                 assert relation in self.relation_meanings and \
                        self.relation_arities[relation] in {-1, arity}
         # Task 7.9
+        validity_results = [self._is_model_of_specific(formula) for formula in formulas]
+        is_model_valid = functools.reduce(lambda a, b: a and b, validity_results)
+        if not is_model_valid:
+            return False
+        else:
+            results = [self._evaluate_formula_all_assignments(formula) for formula in formulas]
+            return functools.reduce(lambda a, b: a and b, results)
+
+    def _evaluate_formula_all_assignments(self, formula):
+        free_variables = formula.free_variables()
+        perm_iter = itertools.product(list(self.universe), repeat=len(free_variables))
+        all_assignments = [dict(zip(free_variables, perm)) for perm in perm_iter]
+        evaluations = [self.evaluate_formula(formula, assignment) for assignment in all_assignments]
+        return functools.reduce(lambda a, b: a and b, evaluations)
+
+    def _is_model_of_specific(self, formula):
+        return self._check_constants(formula.constants()) and self._check_functions(
+            formula.functions()) and self._check_relations(formula.relations())
+
+    def _check_constants(self, constants):
+        return constants.issubset(set(self.constant_meanings.keys()))
+
+    def _check_functions(self, functions):
+        names, arities = set([name for name, _ in functions]), set([arity for _, arity in functions])
+        names_validity = names.issubset(set(self.function_meanings.keys()))
+
+        arity_validity = True
+        for name, arity in functions:
+            if not arity == self.function_arities[name]:
+                return False
+
+        return names_validity
+
+    def _check_relations(self, relations):
+        names, arities = set([name for name, _ in relations]), set([arity for _, arity in relations])
+        names_validity = names.issubset(set(self.relation_meanings.keys()))
+
+        for name, arity in relations:
+            if not arity == self.relation_arities[name]:
+                return False
+
+        return names_validity
