@@ -217,7 +217,7 @@ def test_formula_variables(debug=False):
              {'x', 'zz', 'w'}]]:
         variables = Formula.parse(s).variables()
         if debug:
-            print('The free variables in', s, 'are', variables)
+            print('The variables in', s, 'are', variables)
         assert variables == expected_variables
 
 def test_free_variables(debug=False):

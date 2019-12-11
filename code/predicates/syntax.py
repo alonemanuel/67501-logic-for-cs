@@ -250,6 +250,7 @@ class Term:
                 variables = variables.union(term.variables())
             return variables
 
+
     def functions(self) -> Set[Tuple[str, int]]:
         """Finds all function names in the current term, along with their
         arities.
@@ -594,6 +595,20 @@ class Formula:
         """
 
     # Task 7.6.1
+        if is_equality(self.root):
+            return self.arguments[0].constants().union(self.arguments[1].constants())
+        elif is_relation(self.root):
+            constants = set()
+            for term in self.arguments:
+                constants = constants.union(term.constants())
+            return constants
+        elif is_unary(self.root):
+            return self.first.constants()
+        elif is_binary(self.root):
+            return self.first.constants().union(self.second.constants())
+        elif is_quantifier(self.root):
+            return self.predicate.constants()
+
 
     def variables(self) -> Set[str]:
         """Finds all variable names in the current formula.
@@ -603,6 +618,19 @@ class Formula:
         """
 
     # Task 7.6.2
+        if is_equality(self.root):
+            return self.arguments[0].variables().union(self.arguments[1].variables())
+        elif is_relation(self.root):
+            variables = set()
+            for term in self.arguments:
+                variables = variables.union(term.variables())
+            return variables
+        elif is_unary(self.root):
+            return self.first.variables()
+        elif is_binary(self.root):
+            return self.first.variables().union(self.second.variables())
+        elif is_quantifier(self.root):
+            return self.predicate.variables().union({self.variable})
 
     def free_variables(self) -> Set[str]:
         """Finds all variable names that are free in the current formula.
@@ -613,6 +641,19 @@ class Formula:
         """
 
     # Task 7.6.3
+        if is_equality(self.root):
+            return self.arguments[0].variables().union(self.arguments[1].variables())
+        elif is_relation(self.root):
+            free_variables = set()
+            for term in self.arguments:
+                free_variables = free_variables.union(term.variables())
+            return free_variables
+        elif is_unary(self.root):
+            return self.first.free_variables()
+        elif is_binary(self.root):
+            return self.first.free_variables().union(self.second.free_variables())
+        elif is_quantifier(self.root):
+            return self.predicate.free_variables().difference({self.variable})
 
     def functions(self) -> Set[Tuple[str, int]]:
         """Finds all function names in the current formula, along with their
@@ -624,6 +665,20 @@ class Formula:
         """
 
     # Task 7.6.4
+        if is_equality(self.root):
+            return self.arguments[0].functions().union(self.arguments[1].functions())
+        elif is_relation(self.root):
+            functions = set()
+            for term in self.arguments:
+                functions = functions.union(term.functions())
+            return functions
+        elif is_unary(self.root):
+            return self.first.functions()
+        elif is_binary(self.root):
+            return self.first.functions().union(self.second.functions())
+        elif is_quantifier(self.root):
+            return self.predicate.functions()
+
 
     def relations(self) -> Set[Tuple[str, int]]:
         """Finds all relation names in the current formula, along with their
@@ -635,6 +690,16 @@ class Formula:
         """
 
     # Task 7.6.5
+        if is_equality(self.root):
+            return set()
+        elif is_relation(self.root):
+            return {(self.root, len(self.arguments))}
+        elif is_unary(self.root):
+            return self.first.relations()
+        elif is_binary(self.root):
+            return self.first.relations().union(self.second.relations())
+        elif is_quantifier(self.root):
+            return self.predicate.relations()
 
     def substitute(self, substitution_map: Mapping[str, Term],
                    forbidden_variables: AbstractSet[str] = frozenset()) -> \
