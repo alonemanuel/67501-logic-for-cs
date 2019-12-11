@@ -4,7 +4,7 @@
 # File name: predicates/semantics.py
 
 """Semantic analysis of first-order logic constructs."""
-
+import functools
 from typing import AbstractSet, FrozenSet, Generic, Mapping, Tuple, TypeVar
 
 from logic_utils import frozen, frozendict
@@ -13,6 +13,7 @@ from predicates.syntax import *
 
 #: A generic type for a universe element in a model.
 T = TypeVar('T')
+
 
 @frozen
 class Model(Generic[T]):
@@ -76,7 +77,7 @@ class Model(Generic[T]):
             assert is_relation(relation)
             relation_meaning = relation_meanings[relation]
             if len(relation_meaning) == 0:
-                arity = -1 # any
+                arity = -1  # any
             else:
                 some_arguments = next(iter(relation_meaning))
                 arity = len(some_arguments)
@@ -98,7 +99,7 @@ class Model(Generic[T]):
             some_argument = next(iter(function_meaning))
             arity = len(some_argument)
             assert arity > 0
-            assert len(function_meaning) == len(universe)**arity
+            assert len(function_meaning) == len(universe) ** arity
             for arguments in function_meaning:
                 assert len(arguments) == arity
                 for argument in arguments:
@@ -121,7 +122,7 @@ class Model(Generic[T]):
                str(self.relation_meanings) + \
                ('; Function Meanings=' + str(self.function_meanings)
                 if len(self.function_meanings) > 0 else '')
-        
+
     def evaluate_term(self, term: Term,
                       assignment: Mapping[str, T] = frozendict()) -> T:
         """Calculates the value of the given term in the current model, for the
@@ -140,10 +141,18 @@ class Model(Generic[T]):
         """
         assert term.constants().issubset(self.constant_meanings.keys())
         assert term.variables().issubset(assignment.keys())
-        for function,arity in term.functions():
+        for function, arity in term.functions():
             assert function in self.function_meanings and \
                    self.function_arities[function] == arity
-        # Task 7.7
+            # Task 7.7
+        if is_variable(term.root):
+            return assignment[term.root]
+        elif is_constant(term.root):
+            return self.constant_meanings[term.root]
+        elif is_function(term.root):
+            mapping = self.function_meanings[term.root]
+            key = tuple([self.evaluate_term(term, assignment) for term in term.arguments])
+            return mapping[key]
 
     def evaluate_formula(self, formula: Formula,
                          assignment: Mapping[str, T] = frozendict()) -> bool:
@@ -165,13 +174,42 @@ class Model(Generic[T]):
         """
         assert formula.constants().issubset(self.constant_meanings.keys())
         assert formula.free_variables().issubset(assignment.keys())
-        for function,arity in formula.functions():
+        for function, arity in formula.functions():
             assert function in self.function_meanings and \
                    self.function_arities[function] == arity
-        for relation,arity in formula.relations():
+        for relation, arity in formula.relations():
             assert relation in self.relation_meanings and \
                    self.relation_arities[relation] in {-1, arity}
         # Task 7.8
+        if is_equality(formula.root):
+            l_eval = self.evaluate_term(formula.arguments[0], assignment)
+            r_eval = self.evaluate_term(formula.arguments[1], assignment)
+            return l_eval == r_eval
+        elif is_relation(formula.root):
+            subset = tuple([self.evaluate_term(term, assignment) for term in formula.arguments])
+            return subset in self.relation_meanings[formula.root]
+        elif is_unary(formula.root):
+            return not self.evaluate_formula(formula.first, assignment)
+        elif is_binary(formula.root):
+            l_eval = self.evaluate_formula(formula.first)
+            r_eval = self.evaluate_formula(formula.second)
+            if formula.root == '&':
+                return l_eval and r_eval
+            elif formula.root == '|':
+                return l_eval or r_eval
+            elif formula.root == '->':
+                return (not l_eval) or r_eval
+        elif is_quantifier(formula.root):
+            if formula.root == 'A':
+                predicate_func = lambda a, b: a and b
+            elif formula.root == 'E':
+                predicate_func = lambda a, b: a or b
+            results = []
+            for elem in self.universe:
+                curr_assign = dict(assignment)
+                curr_assign[formula.variable] = elem
+                results.append(self.evaluate_formula(formula.predicate, curr_assign))
+            return functools.reduce(predicate_func, results)
 
     def is_model_of(self, formulas: AbstractSet[Formula]) -> bool:
         """Checks if the current model is a model for the given formulas.
@@ -184,10 +222,10 @@ class Model(Generic[T]):
         """
         for formula in formulas:
             assert formula.constants().issubset(self.constant_meanings.keys())
-            for function,arity in formula.functions():
+            for function, arity in formula.functions():
                 assert function in self.function_meanings and \
                        self.function_arities[function] == arity
-            for relation,arity in formula.relations():
+            for relation, arity in formula.relations():
                 assert relation in self.relation_meanings and \
                        self.relation_arities[relation] in {-1, arity}
         # Task 7.9
