@@ -13,6 +13,10 @@ from logic_utils import fresh_variable_name_generator
 from predicates.syntax import *
 from predicates.semantics import *
 
+IMPLIES = '->'
+
+FORALL = 'A'
+
 
 def function_name_to_relation_name(function: str) -> str:
     """Converts the given function name to a canonically corresponding relation
@@ -167,7 +171,7 @@ def _compile_term_helper(term, z_list):
                 inner_z_lst = compile_term(arg)
                 z_list += inner_z_lst
                 new_args.append(inner_z_lst[-1].arguments[0])
-        new_z = next(fresh_variable_name_generator)
+        new_z = Term(next(fresh_variable_name_generator))
         new_term = Term(term.root, new_args)
         z_formula = Formula('=', [new_z, new_term])
         z_list.append(z_formula)
@@ -196,9 +200,56 @@ def replace_functions_with_relations_in_formula(formula: Formula) -> Formula:
         {relation for relation, arity in formula.relations()})) == 0
     for variable in formula.variables():
         assert variable[0] != 'z'
+    # Task 8.4
+    if is_constant(formula.root) or is_variable(formula.root):
+        return formula
+    elif is_unary(formula.root):
+        return Formula(formula.root, replace_functions_with_relations_in_formula(formula.first))
+    elif is_binary(formula.root):
+        first = replace_functions_with_relations_in_formula(formula.first)
+        second = replace_functions_with_relations_in_formula(formula.second)
+        return Formula(formula.root, first, second)
+    elif is_relation(formula.root) or is_equality(formula.root):
+        return _replace_functions_in_relation(formula)
+    elif is_quantifier(formula.root):
+        return Formula(formula.root, formula.variable, replace_functions_with_relations_in_formula(formula.predicate))
 
 
-# Task 8.4
+
+
+def _replace_functions_in_relation(formula):
+    z_list = []
+    for arg in formula.arguments:
+        if is_function(arg.root):
+            z_list += compile_term(arg)
+    z_list.reverse()
+    curr_consequent = _get_base_formula(formula, z_list)
+
+    for z_formula in z_list:
+        z_var, z_func = z_formula.arguments
+        ante = _get_ante(z_var, z_func)
+        predicate = Formula(IMPLIES, ante, curr_consequent)
+        curr_consequent = Formula(FORALL, z_var.root, predicate)
+
+    return curr_consequent
+
+def _get_ante(z_var, z_func):
+    relation_name = function_name_to_relation_name(z_func.root)
+    relation_args = (z_var,) + z_func.arguments
+    return Formula(relation_name, relation_args)
+
+
+def _get_base_formula(formula, z_list):
+    base_formula_args = []
+    arg_i = 0
+    for arg in reversed(formula.arguments):
+        if is_constant(arg.root) or is_variable(arg.root):
+            base_formula_args.append(arg)
+        elif is_function(arg.root):
+            base_formula_args.append(z_list[arg_i].arguments[0])
+            arg_i += 1
+    base_formula_args.reverse()
+    return Formula(formula.root, base_formula_args)
 
 
 def replace_functions_with_relations_in_formulas(formulas:
