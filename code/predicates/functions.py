@@ -151,8 +151,27 @@ def compile_term(term: Term) -> List[Formula]:
     """
     assert is_function(term.root)
 
+    # Task 8.3
+    return _compile_term_helper(term, [])
 
-# Task 8.3
+
+def _compile_term_helper(term, z_list):
+    if is_constant(term.root) or is_variable(term.root):
+        return z_list
+    elif is_function(term.root):
+        new_args = []
+        for arg in term.arguments:
+            if is_constant(arg.root) or is_variable(arg.root):
+                new_args.append(arg)
+            if is_function(arg.root):
+                inner_z_lst = compile_term(arg)
+                z_list += inner_z_lst
+                new_args.append(inner_z_lst[-1].arguments[0])
+        new_z = next(fresh_variable_name_generator)
+        new_term = Term(term.root, new_args)
+        z_formula = Formula('=', [new_z, new_term])
+        z_list.append(z_formula)
+        return z_list
 
 
 def replace_functions_with_relations_in_formula(formula: Formula) -> Formula:
@@ -302,4 +321,3 @@ def make_equality_as_SAME_in_model(model: Model[T]) -> Model[T]:
     assert 'SAME' in model.relation_meanings and \
            model.relation_arities['SAME'] == 2
     assert len(model.function_meanings) == 0
-# Task 8.8
