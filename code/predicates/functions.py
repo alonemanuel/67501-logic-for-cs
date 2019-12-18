@@ -13,13 +13,19 @@ from logic_utils import fresh_variable_name_generator
 from predicates.syntax import *
 from predicates.semantics import *
 
+EQ = '='
+
+AND_OP = '&'
+
+EXISTS = 'E'
+
 IMPLIES = '->'
 
 FORALL = 'A'
 
 
 def function_name_to_relation_name(function: str) -> str:
-    """Converts the given function name to a canonically corresponding relation
+	"""Converts the given function name to a canonically corresponding relation
     name.
 
     Parameters:
@@ -29,12 +35,12 @@ def function_name_to_relation_name(function: str) -> str:
         A relation name that is the same as the given function name, except that
         its first letter is capitalized.
     """
-    assert is_function(function)
-    return function[0].upper() + function[1:]
+	assert is_function(function)
+	return function[0].upper() + function[1:]
 
 
 def relation_name_to_function_name(relation: str) -> str:
-    """Converts the given relation name to a canonically corresponding function
+	"""Converts the given relation name to a canonically corresponding function
     name.
 
     Parameters:
@@ -45,12 +51,12 @@ def relation_name_to_function_name(relation: str) -> str:
         `function_name_to_relation_name`\ ``(``\ `function`\ ``)`` is the given
         relation name.
     """
-    assert is_relation(relation)
-    return relation[0].lower() + relation[1:]
+	assert is_relation(relation)
+	return relation[0].lower() + relation[1:]
 
 
 def replace_functions_with_relations_in_model(model: Model[T]) -> Model[T]:
-    """Converts the given model to a canonically corresponding model without any
+	"""Converts the given model to a canonically corresponding model without any
     function meanings, replacing each function meaning with a canonically
     corresponding relation meaning.
 
@@ -67,28 +73,28 @@ def replace_functions_with_relations_in_model(model: Model[T]) -> Model[T]:
         is the output of the function meaning for the arguments
         ``(``\ `x2`\ ``,``...\ ``,``\ `xn`\ ``)``.
     """
-    for function in model.function_meanings:
-        assert function_name_to_relation_name(function) not in \
-               model.relation_meanings
-    # Task 8.1
-    new_relation_meanings = dict(model.relation_meanings)
-    for func, func_mapping in model.function_meanings.items():
-        relation_name = function_name_to_relation_name(func)
-        relation_meaning = set()
-        for func_args, func_res in func_mapping.items():
-            curr_meaning = (func_res,) + func_args
-            relation_meaning.add(curr_meaning)
+	for function in model.function_meanings:
+		assert function_name_to_relation_name(function) not in \
+			   model.relation_meanings
+	# Task 8.1
+	new_relation_meanings = dict(model.relation_meanings)
+	for func, func_mapping in model.function_meanings.items():
+		relation_name = function_name_to_relation_name(func)
+		relation_meaning = set()
+		for func_args, func_res in func_mapping.items():
+			curr_meaning = (func_res,) + func_args
+			relation_meaning.add(curr_meaning)
 
-        new_relation_meanings[relation_name] = relation_meaning
+		new_relation_meanings[relation_name] = relation_meaning
 
-    return Model(model.universe, model.constant_meanings, new_relation_meanings, dict())
+	return Model(model.universe, model.constant_meanings, new_relation_meanings, dict())
 
 
 def replace_relations_with_functions_in_model(model: Model[T],
-                                              original_functions:
-                                              AbstractSet[str]) -> \
-        Union[Model[T], None]:
-    """Converts the given model with no function meanings to a canonically
+											  original_functions:
+											  AbstractSet[str]) -> \
+		Union[Model[T], None]:
+	"""Converts the given model with no function meanings to a canonically
     corresponding model with meanings for the given function names, having each
     new function meaning replace a canonically corresponding relation meaning.
 
@@ -103,38 +109,38 @@ def replace_relations_with_functions_in_model(model: Model[T],
         `replace_functions_with_relations_in_model`\ ``(``\ `model`\ ``)``
         is the given model, or ``None`` if no such model exists.
     """
-    for function in original_functions:
-        assert is_function(function)
-        assert function not in model.function_meanings
-        assert function_name_to_relation_name(function) in \
-               model.relation_meanings
+	for function in original_functions:
+		assert is_function(function)
+		assert function not in model.function_meanings
+		assert function_name_to_relation_name(function) in \
+			   model.relation_meanings
 
-    # Task 8.2
-    new_function_meanings = dict()
-    new_relation_meanings = dict(model.relation_meanings)
+	# Task 8.2
+	new_function_meanings = dict()
+	new_relation_meanings = dict(model.relation_meanings)
 
-    for orig_func_name in original_functions:
-        curr_function_meaning = dict()
-        relation_name = function_name_to_relation_name(orig_func_name)
-        if len(model.relation_meanings[relation_name]) != len(model.universe) ** (model.relation_arities[
-                                                                                      relation_name] - 1):
-            return None
-        else:
-            for curr_meaning in model.relation_meanings[relation_name]:
-                func_res = curr_meaning[0]
-                func_args = tuple(curr_meaning[1:])
-                if func_args in curr_function_meaning.keys():
-                    return None
-                curr_function_meaning[func_args] = func_res
+	for orig_func_name in original_functions:
+		curr_function_meaning = dict()
+		relation_name = function_name_to_relation_name(orig_func_name)
+		if len(model.relation_meanings[relation_name]) != len(model.universe) ** (model.relation_arities[
+																					  relation_name] - 1):
+			return None
+		else:
+			for curr_meaning in model.relation_meanings[relation_name]:
+				func_res = curr_meaning[0]
+				func_args = tuple(curr_meaning[1:])
+				if func_args in curr_function_meaning.keys():
+					return None
+				curr_function_meaning[func_args] = func_res
 
-        new_function_meanings[orig_func_name] = curr_function_meaning
-        del new_relation_meanings[relation_name]
+		new_function_meanings[orig_func_name] = curr_function_meaning
+		del new_relation_meanings[relation_name]
 
-    return Model(model.universe, model.constant_meanings, new_relation_meanings, new_function_meanings)
+	return Model(model.universe, model.constant_meanings, new_relation_meanings, new_function_meanings)
 
 
 def compile_term(term: Term) -> List[Formula]:
-    """Syntactically compiles the given term into a list of single-function
+	"""Syntactically compiles the given term into a list of single-function
     invocation steps.
 
     Parameters:
@@ -153,33 +159,33 @@ def compile_term(term: Term) -> List[Formula]:
         steps hold in any model, then the left-hand-side variable of the last
         returned step evaluates in that model to the value of the given term.
     """
-    assert is_function(term.root)
+	assert is_function(term.root)
 
-    # Task 8.3
-    return _compile_term_helper(term, [])
+	# Task 8.3
+	return _compile_term_helper(term, [])
 
 
 def _compile_term_helper(term, z_list):
-    if is_constant(term.root) or is_variable(term.root):
-        return z_list
-    elif is_function(term.root):
-        new_args = []
-        for arg in term.arguments:
-            if is_constant(arg.root) or is_variable(arg.root):
-                new_args.append(arg)
-            if is_function(arg.root):
-                inner_z_lst = compile_term(arg)
-                z_list += inner_z_lst
-                new_args.append(inner_z_lst[-1].arguments[0])
-        new_z = Term(next(fresh_variable_name_generator))
-        new_term = Term(term.root, new_args)
-        z_formula = Formula('=', [new_z, new_term])
-        z_list.append(z_formula)
-        return z_list
+	if is_constant(term.root) or is_variable(term.root):
+		return z_list
+	elif is_function(term.root):
+		new_args = []
+		for arg in term.arguments:
+			if is_constant(arg.root) or is_variable(arg.root):
+				new_args.append(arg)
+			if is_function(arg.root):
+				inner_z_lst = compile_term(arg)
+				z_list += inner_z_lst
+				new_args.append(inner_z_lst[-1].arguments[0])
+		new_z = Term(next(fresh_variable_name_generator))
+		new_term = Term(term.root, new_args)
+		z_formula = Formula('=', [new_z, new_term])
+		z_list.append(z_formula)
+		return z_list
 
 
 def replace_functions_with_relations_in_formula(formula: Formula) -> Formula:
-    """Syntactically converts the given formula to a formula that does not
+	"""Syntactically converts the given formula to a formula that does not
     contain any function invocations, and is "one-way equivalent" in the sense
     that the former holds in a model if and only if the latter holds in the
     canonically corresponding model with no function meanings.
@@ -195,67 +201,66 @@ def replace_functions_with_relations_in_formula(formula: Formula) -> Formula:
         only if the returned formula holds in
         `replace_function_with_relations_in_model`\ ``(``\ `model`\ ``)``.
     """
-    assert len({function_name_to_relation_name(function) for
-                function, arity in formula.functions()}.intersection(
-        {relation for relation, arity in formula.relations()})) == 0
-    for variable in formula.variables():
-        assert variable[0] != 'z'
-    # Task 8.4
-    if is_constant(formula.root) or is_variable(formula.root):
-        return formula
-    elif is_unary(formula.root):
-        return Formula(formula.root, replace_functions_with_relations_in_formula(formula.first))
-    elif is_binary(formula.root):
-        first = replace_functions_with_relations_in_formula(formula.first)
-        second = replace_functions_with_relations_in_formula(formula.second)
-        return Formula(formula.root, first, second)
-    elif is_relation(formula.root) or is_equality(formula.root):
-        return _replace_functions_in_relation(formula)
-    elif is_quantifier(formula.root):
-        return Formula(formula.root, formula.variable, replace_functions_with_relations_in_formula(formula.predicate))
-
-
+	assert len({function_name_to_relation_name(function) for
+				function, arity in formula.functions()}.intersection(
+		{relation for relation, arity in formula.relations()})) == 0
+	for variable in formula.variables():
+		assert variable[0] != 'z'
+	# Task 8.4
+	if is_constant(formula.root) or is_variable(formula.root):
+		return formula
+	elif is_unary(formula.root):
+		return Formula(formula.root, replace_functions_with_relations_in_formula(formula.first))
+	elif is_binary(formula.root):
+		first = replace_functions_with_relations_in_formula(formula.first)
+		second = replace_functions_with_relations_in_formula(formula.second)
+		return Formula(formula.root, first, second)
+	elif is_relation(formula.root) or is_equality(formula.root):
+		return _replace_functions_in_relation(formula)
+	elif is_quantifier(formula.root):
+		return Formula(formula.root, formula.variable, replace_functions_with_relations_in_formula(formula.predicate))
 
 
 def _replace_functions_in_relation(formula):
-    z_list = []
-    for arg in formula.arguments:
-        if is_function(arg.root):
-            z_list += compile_term(arg)
-    z_list.reverse()
-    curr_consequent = _get_base_formula(formula, z_list)
+	z_list = []
+	for arg in formula.arguments:
+		if is_function(arg.root):
+			z_list += compile_term(arg)
+	z_list.reverse()
+	curr_consequent = _get_base_formula(formula, z_list)
 
-    for z_formula in z_list:
-        z_var, z_func = z_formula.arguments
-        ante = _get_ante(z_var, z_func)
-        predicate = Formula(IMPLIES, ante, curr_consequent)
-        curr_consequent = Formula(FORALL, z_var.root, predicate)
+	for z_formula in z_list:
+		z_var, z_func = z_formula.arguments
+		ante = _get_ante(z_var, z_func)
+		predicate = Formula(IMPLIES, ante, curr_consequent)
+		curr_consequent = Formula(FORALL, z_var.root, predicate)
 
-    return curr_consequent
+	return curr_consequent
+
 
 def _get_ante(z_var, z_func):
-    relation_name = function_name_to_relation_name(z_func.root)
-    relation_args = (z_var,) + z_func.arguments
-    return Formula(relation_name, relation_args)
+	relation_name = function_name_to_relation_name(z_func.root)
+	relation_args = (z_var,) + z_func.arguments
+	return Formula(relation_name, relation_args)
 
 
 def _get_base_formula(formula, z_list):
-    base_formula_args = []
-    arg_i = 0
-    for arg in reversed(formula.arguments):
-        if is_constant(arg.root) or is_variable(arg.root):
-            base_formula_args.append(arg)
-        elif is_function(arg.root):
-            base_formula_args.append(z_list[arg_i].arguments[0])
-            arg_i += 1
-    base_formula_args.reverse()
-    return Formula(formula.root, base_formula_args)
+	base_formula_args = []
+	arg_i = 0
+	for arg in reversed(formula.arguments):
+		if is_constant(arg.root) or is_variable(arg.root):
+			base_formula_args.append(arg)
+		elif is_function(arg.root):
+			base_formula_args.append(z_list[arg_i].arguments[0])
+			arg_i += 1
+	base_formula_args.reverse()
+	return Formula(formula.root, base_formula_args)
 
 
 def replace_functions_with_relations_in_formulas(formulas:
 AbstractSet[Formula]) -> \
-        Set[Formula]:
-    """Syntactically converts the given set of formulas to a set of formulas
+		Set[Formula]:
+	"""Syntactically converts the given set of formulas to a set of formulas
     that do not contain any function invocations, and is "two-way
     equivalent" in the sense that:
 
@@ -284,23 +289,71 @@ AbstractSet[Formula]) -> \
            where `original_functions` are all the function names in the given
            formulas, is a model and the given formulas hold in it.
     """
-    assert len(set.union(*[{function_name_to_relation_name(function) for
-                            function, arity in formula.functions()}
-                           for formula in formulas]).intersection(
-        set.union(*[{relation for relation, arity in
-                     formula.relations()} for
-                    formula in formulas]))) == 0
-    for formula in formulas:
-        for variable in formula.variables():
-            assert variable[0] != 'z'
+	assert len(set.union(*[{function_name_to_relation_name(function) for
+							function, arity in formula.functions()}
+						   for formula in formulas]).intersection(
+		set.union(*[{relation for relation, arity in
+					 formula.relations()} for
+					formula in formulas]))) == 0
+	for formula in formulas:
+		for variable in formula.variables():
+			assert variable[0] != 'z'
+	# Task 8.5
+	new_formulas = [replace_functions_with_relations_in_formula(formula) for formula in formulas]
+	all_funcs = [formula.functions() for formula in formulas]
+	all_funcs = [item for sublist in all_funcs for item in sublist]
+	verifications = [_get_verification_for_formula(func_name, n_args) for func_name, n_args in all_funcs]
+	return set(new_formulas + verifications)
 
 
-# Task 8.5
+def _get_verification_for_formula(func_name, n_args):
+	func_args = [Term(next(fresh_variable_name_generator)) for i in range(n_args)]
+	verif1 = _get_verif_for_definition(func_name, func_args)
+	verif2 = _get_verif_for_uniqueness(func_name, func_args)
+	return Formula(AND_OP, verif1, verif2)
+
+
+def _get_base_formula_for_definition(func_name, func_args):
+	relation_name = function_name_to_relation_name(func_name)
+	res_arg = Term(next(fresh_variable_name_generator))
+	base_relation = Formula(relation_name, [res_arg] + func_args)
+	base_formula = Formula(EXISTS, res_arg.root, base_relation)
+	return base_formula
+
+
+def _get_verif_for_definition(func_name, func_args):
+	predicate = _get_base_formula_for_definition(func_name, func_args)
+	return _verif_from_predicate(predicate, func_args)
+
+
+def _verif_from_predicate(curr_predicate, func_args):
+	for arg in func_args:
+		curr_predicate = Formula(FORALL, arg.root, curr_predicate)
+	return curr_predicate
+
+
+def _get_base_formula_for_uniqueness(func_name, func_args):
+	relation_name = function_name_to_relation_name(func_name)
+	res_arg1, res_arg2 = [Term(next(fresh_variable_name_generator)) for i in [0, 1]]
+
+	relation1 = Formula(relation_name, [res_arg1] + func_args)
+	relation2 = Formula(relation_name, [res_arg2] + func_args)
+	ante = Formula(AND_OP, relation1, relation2)
+	consequent = Formula(EQ, [res_arg1, res_arg2])
+
+	predicate = Formula(IMPLIES, ante, consequent)
+	formula = Formula(FORALL, res_arg1.root, Formula(FORALL, res_arg2.root, predicate))
+	return formula
+
+
+def _get_verif_for_uniqueness(func_name, func_args):
+	predicate = _get_base_formula_for_uniqueness(func_name, func_args)
+	return _verif_from_predicate(predicate, func_args)
 
 
 def replace_equality_with_SAME_in_formulas(formulas: AbstractSet[Formula]) -> \
-        Set[Formula]:
-    """Syntactically converts the given set of formulas to a canonically
+		Set[Formula]:
+	"""Syntactically converts the given set of formulas to a canonically
     corresponding set of formulas that do not contain any equalities, consisting
     of the following formulas:
 
@@ -320,17 +373,17 @@ def replace_equality_with_SAME_in_formulas(formulas: AbstractSet[Formula]) -> \
     Returns:
         The converted set of formulas.
     """
-    for formula in formulas:
-        assert len(formula.functions()) == 0
-        assert 'SAME' not in \
-               {relation for relation, arity in formula.relations()}
+	for formula in formulas:
+		assert len(formula.functions()) == 0
+		assert 'SAME' not in \
+			   {relation for relation, arity in formula.relations()}
 
 
 # Task 8.6
 
 
 def add_SAME_as_equality_in_model(model: Model[T]) -> Model[T]:
-    """Adds a meaning for the relation name ``'SAME'`` in the given model, that
+	"""Adds a meaning for the relation name ``'SAME'`` in the given model, that
     canonically corresponds to equality in the given model.
 
     Parameters:
@@ -343,14 +396,14 @@ def add_SAME_as_equality_in_model(model: Model[T]) -> Model[T]:
         ``(``\ `x`\ ``,``\ `x`\ ``)`` for every element `x` of the universe of
         the given model.
     """
-    assert 'SAME' not in model.relation_meanings
+	assert 'SAME' not in model.relation_meanings
 
 
 # Task 8.7
 
 
 def make_equality_as_SAME_in_model(model: Model[T]) -> Model[T]:
-    """Converts the given model to a model where equality coincides with the
+	"""Converts the given model to a model where equality coincides with the
     meaning of ``'SAME'`` in the given model, in the sense that any set of
     formulas holds in the returned model if and only if its canonically
     corresponding set of formulas that do not contain equality holds in the
@@ -369,6 +422,6 @@ def make_equality_as_SAME_in_model(model: Model[T]) -> Model[T]:
         the returned model corresponds to the equivalence classes of the
         ``'SAME'`` relation in the given model.
     """
-    assert 'SAME' in model.relation_meanings and \
-           model.relation_arities['SAME'] == 2
-    assert len(model.function_meanings) == 0
+	assert 'SAME' in model.relation_meanings and \
+		   model.relation_arities['SAME'] == 2
+	assert len(model.function_meanings) == 0
