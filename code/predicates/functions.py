@@ -302,11 +302,11 @@ AbstractSet[Formula]) -> \
 	new_formulas = [replace_functions_with_relations_in_formula(formula) for formula in formulas]
 	all_funcs = [formula.functions() for formula in formulas]
 	all_funcs = [item for sublist in all_funcs for item in sublist]
-	verifications = [_get_verification_for_formula(func_name, n_args) for func_name, n_args in all_funcs]
+	verifications = [_get_verification_for_function(func_name, n_args) for func_name, n_args in all_funcs]
 	return set(new_formulas + verifications)
 
 
-def _get_verification_for_formula(func_name, n_args):
+def _get_verification_for_function(func_name, n_args):
 	func_args = [Term(next(fresh_variable_name_generator)) for i in range(n_args)]
 	verif1 = _get_verif_for_definition(func_name, func_args)
 	verif2 = _get_verif_for_uniqueness(func_name, func_args)
@@ -378,24 +378,95 @@ def replace_equality_with_SAME_in_formulas(formulas: AbstractSet[Formula]) -> \
 		assert 'SAME' not in \
 			   {relation for relation, arity in formula.relations()}
 
+	# Task 8.6
+	SAME_basic_formulas = _get_SAME_basic_formulas()
+	SAME_relation_formulas = _get_SAME_relation_formulas(formulas)
+	SAME_equality_formulas = _get_SAME_equality_formulas(formulas)
+	return set(SAME_basic_formulas + SAME_relation_formulas + SAME_equality_formulas)
 
-# Task 8.6
+
+def _get_SAME_relation_formulas(formulas):
+	all_relations = [formula.relations() for formula in formulas]
+	# Removing 0-ary relations
+	all_relations = [item for sublist in all_relations for item in sublist if item[1] > 0]
+
+	verifications = [_get_verification_for_relation(rel_name, n_args) for rel_name, n_args in all_relations]
+	return verifications
+
+
+def _get_verification_for_relation(rel_name, n_args):
+	rel_args = [[Term(next(fresh_variable_name_generator)) for i in range(n_args)] for j in [0, 1]]
+	predicate = _get_base_formula_for_relation(rel_name, rel_args)
+	flattened_args = rel_args[0] + rel_args[1]
+	formula = _verif_from_predicate(predicate, flattened_args)
+	return formula
+
+
+def _get_base_formula_for_relation(rel_name, rel_args):
+	pairs_of_sames = [Formula('SAME', [rel_args[0][i], rel_args[1][i]]) for i in range(len(rel_args[0]))]
+	l_side = pairs_of_sames[0]
+	for pair in pairs_of_sames[1:]:
+		l_side = Formula(AND_OP, pair, l_side)
+	r_side = Formula(IMPLIES, Formula(rel_name, rel_args[0]), Formula(rel_name, rel_args[1]))
+	return Formula(IMPLIES, l_side, r_side)
+
+
+def _get_SAME_equality_formulas(formulas):
+	replaced = [_get_SAME_equality_formula(formula) for formula in formulas]
+	return replaced
+
+
+def _get_SAME_equality_formula(formula):
+	if is_equality(formula.root):
+		return Formula('SAME', formula.arguments)
+	elif is_quantifier(formula.root):
+		return Formula(formula.root, formula.variable, _get_SAME_equality_formula(formula.predicate))
+	elif is_unary(formula.root):
+		return Formula(formula.root, _get_SAME_equality_formula(formula.first))
+	elif is_binary(formula.root):
+		return Formula(formula.root, _get_SAME_equality_formula(formula.first), _get_SAME_equality_formula(formula.second))
+
+	else:
+		return formula
+
+
+def _get_SAME_basic_formulas():
+	ref_var = Term(next(fresh_variable_name_generator))
+	ref_predicate = Formula('SAME', [ref_var, ref_var])
+	reflexitivity = Formula(FORALL, ref_var.root, ref_predicate)
+
+	symm_var1, symm_var2 = [Term(next(fresh_variable_name_generator)) for _ in [0, 1]]
+	symm_l_formula = Formula('SAME', [symm_var1, symm_var2])
+	symm_ = Formula('SAME', [symm_var2, symm_var1])
+	symm_predicate = Formula(IMPLIES, symm_l_formula, symm_)
+	symmetry = Formula(FORALL, symm_var1.root, Formula(FORALL, symm_var2.root, symm_predicate))
+
+	tran_var1, tran_var2, tran_var3 = [Term(next(fresh_variable_name_generator)) for _ in [0, 1, 2]]
+	tran_l_and = Formula('SAME', [tran_var1, tran_var2])
+	tran_r_and = Formula('SAME', [tran_var2, tran_var3])
+	tran_l_formula = Formula(AND_OP, tran_l_and, tran_r_and)
+	tran_r_formula = Formula('SAME', [tran_var1, tran_var3])
+	tran_predicate = Formula(IMPLIES, tran_l_formula, tran_r_formula)
+	transitivity = Formula(FORALL, tran_var1.root,
+						   Formula(FORALL, tran_var2.root, Formula(FORALL, tran_var3.root, tran_predicate)))
+
+	return [reflexitivity, symmetry, transitivity]
 
 
 def add_SAME_as_equality_in_model(model: Model[T]) -> Model[T]:
 	"""Adds a meaning for the relation name ``'SAME'`` in the given model, that
-    canonically corresponds to equality in the given model.
+	canonically corresponds to equality in the given model.
 
-    Parameters:
-        model: model that has no meaning for the relation name ``'SAME'``, to
-            add the meaning to.
+	Parameters:
+		model: model that has no meaning for the relation name ``'SAME'``, to
+			add the meaning to.
 
-    Return:
-        A model obtained from the given model by adding a meaning for the
-        relation name ``'SAME'``, that contains precisely all pairs
-        ``(``\ `x`\ ``,``\ `x`\ ``)`` for every element `x` of the universe of
-        the given model.
-    """
+	Return:
+		A model obtained from the given model by adding a meaning for the
+		relation name ``'SAME'``, that contains precisely all pairs
+		``(``\ `x`\ ``,``\ `x`\ ``)`` for every element `x` of the universe of
+		the given model.
+	"""
 	assert 'SAME' not in model.relation_meanings
 
 
