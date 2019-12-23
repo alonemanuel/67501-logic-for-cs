@@ -250,7 +250,6 @@ class Term:
                 variables = variables.union(term.variables())
             return variables
 
-
     def functions(self) -> Set[Tuple[str, int]]:
         """Finds all function names in the current term, along with their
         arities.
@@ -305,8 +304,24 @@ class Term:
         for variable in forbidden_variables:
             assert is_variable(variable)
 
+        # Task 9.1
 
-# Task 9.1
+        if is_constant(self.root) or is_variable(self.root):
+            if self.root in substitution_map.keys():
+                sub_term = substitution_map[self.root]
+                bad_vars = sub_term.variables().intersection(forbidden_variables)
+                if len(bad_vars) > 0:
+                    raise ForbiddenVariableError(list(bad_vars)[0])
+                else:
+                    return sub_term
+            else:
+                return self
+        if is_function(self.root):
+            sub_args = []
+            for arg in self.arguments:
+                sub_args.append(arg.substitute(substitution_map, forbidden_variables))
+            sub_func = Term(self.root, sub_args)
+            return sub_func
 
 
 def is_equality(s: str) -> bool:
@@ -469,8 +484,6 @@ class Formula:
                     return f'{repr})'
             else:
                 return f'{self.root}()'
-
-
         elif is_quantifier(self.root):
             return f'{str(self.root)}{str(self.variable)}[{str(self.predicate)}]'
 
@@ -594,7 +607,7 @@ class Formula:
             A set of all constant names used in the current formula.
         """
 
-    # Task 7.6.1
+        # Task 7.6.1
         if is_equality(self.root):
             return self.arguments[0].constants().union(self.arguments[1].constants())
         elif is_relation(self.root):
@@ -609,7 +622,6 @@ class Formula:
         elif is_quantifier(self.root):
             return self.predicate.constants()
 
-
     def variables(self) -> Set[str]:
         """Finds all variable names in the current formula.
 
@@ -617,7 +629,7 @@ class Formula:
             A set of all variable names used in the current formula.
         """
 
-    # Task 7.6.2
+        # Task 7.6.2
         if is_equality(self.root):
             return self.arguments[0].variables().union(self.arguments[1].variables())
         elif is_relation(self.root):
@@ -640,7 +652,7 @@ class Formula:
             within a scope of a quantification on those variable names.
         """
 
-    # Task 7.6.3
+        # Task 7.6.3
         if is_equality(self.root):
             return self.arguments[0].variables().union(self.arguments[1].variables())
         elif is_relation(self.root):
@@ -664,7 +676,7 @@ class Formula:
             all function names used in the current formula.
         """
 
-    # Task 7.6.4
+        # Task 7.6.4
         if is_equality(self.root):
             return self.arguments[0].functions().union(self.arguments[1].functions())
         elif is_relation(self.root):
@@ -679,7 +691,6 @@ class Formula:
         elif is_quantifier(self.root):
             return self.predicate.functions()
 
-
     def relations(self) -> Set[Tuple[str, int]]:
         """Finds all relation names in the current formula, along with their
         arities.
@@ -689,7 +700,7 @@ class Formula:
             all relation names used in the current formula.
         """
 
-    # Task 7.6.5
+        # Task 7.6.5
         if is_equality(self.root):
             return set()
         elif is_relation(self.root):
@@ -745,7 +756,29 @@ class Formula:
         for variable in forbidden_variables:
             assert is_variable(variable)
 
-    # Task 9.2
+        # Task 9.2
+        if is_equality(self.root):
+            args = [self.arguments[i].substitute(substitution_map, forbidden_variables) for i in [0, 1]]
+            return Formula(self.root, args)
+        elif is_unary(self.root):
+            sub_first = self.first.substitute(substitution_map, forbidden_variables)
+            return Formula(self.root, sub_first)
+        elif is_binary(self.root):
+            sub_first, sub_second = [arg.substitute(substitution_map, forbidden_variables) for arg in
+                                     [self.first, self.second]]
+            return Formula(self.root, sub_first, sub_second)
+        elif is_relation(self.root):
+            sub_args = []
+            for arg in self.arguments:
+                sub_args.append(arg.substitute(substitution_map, forbidden_variables))
+            return Formula(self.root, sub_args)
+        elif is_quantifier(self.root):
+            new_sub_map = dict(substitution_map)
+            if self.variable in substitution_map.keys():
+                del new_sub_map[self.variable]
+            new_forbidden = set(forbidden_variables).union({self.variable})
+            sub_predicate = self.predicate.substitute(new_sub_map, new_forbidden)
+            return Formula(self.root, self.variable, sub_predicate)
 
     def propositional_skeleton(self) -> Tuple[PropositionalFormula,
                                               Mapping[str, Formula]]:
