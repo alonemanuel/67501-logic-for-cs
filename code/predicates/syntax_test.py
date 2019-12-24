@@ -292,7 +292,7 @@ def test_formula_substitute(debug=False):
         formula = Formula.parse(s)
         substitution_map = {v: Term.parse(substitution[v])
                             for v in substitution.keys()}
-        result = str(formula.substitute(substitution_map))
+i        result = str(formula.substitute(substitution_map))
         if debug:
             print('Substituting', substitution_map, 'in', formula, 'yields',
                   result)

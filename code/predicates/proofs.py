@@ -238,6 +238,21 @@ class Schema:
         for variable in bound_variables:
             assert is_variable(variable)
         # Task 9.3
+        root = formula.root
+        if is_equality(root):
+            pass
+        elif is_unary(root):
+            pass
+        elif is_binary(root):
+            pass
+        elif is_relation(root):
+            inst_args = []
+            # TODO: Handle parameterless relations
+            for arg in formula.arguments:
+                inst_args.append(arg.substitute(constants_and_variables_instantiation_map, ))
+
+        elif is_quantifier(root):
+            pass
 
     def instantiate(self, instantiation_map: InstantiationMap) -> \
             Union[Formula, None]:
