@@ -238,21 +238,48 @@ class Schema:
         for variable in bound_variables:
             assert is_variable(variable)
         # Task 9.3
+
+
         root = formula.root
         if is_equality(root):
             pass
         elif is_unary(root):
-            pass
+            inside_formula = Schema._instantiate_helper(formula.first, constants_and_variables_instantiation_map, relations_instantiation_map, bound_variables)
+            return Formula(root, inside_formula)
         elif is_binary(root):
-            pass
+            l_inst = Schema._instantiate_helper(formula.first, constants_and_variables_instantiation_map, relations_instantiation_map, bound_variables)
+            r_inst = Schema._instantiate_helper(formula.second, constants_and_variables_instantiation_map, relations_instantiation_map, bound_variables)
+            return Formula(root, l_inst, r_inst)
         elif is_relation(root):
+
             inst_args = []
+            inst_root = root
             # TODO: Handle parameterless relations
             for arg in formula.arguments:
-                inst_args.append(arg.substitute(constants_and_variables_instantiation_map, ))
+                inst_args.append(arg.substitute(constants_and_variables_instantiation_map))
+            if root in relations_instantiation_map.keys():
+                instantiation = relations_instantiation_map[root]
+                bad_vars = list(instantiation.free_variables().intersection(bound_variables))
+                if len(bad_vars)>0:
+                    raise Schema.BoundVariableError(bad_vars[0], root)
+
+                if len(formula.arguments):
+
+                    new_formula = instantiation.substitute({'_':inst_args[0]})
+                else:
+                    new_formula = instantiation
+            else:
+                new_formula = Formula(root, inst_args)
+            return new_formula
 
         elif is_quantifier(root):
-            pass
+            updated_var = formula.variable
+            if formula.variable in constants_and_variables_instantiation_map.keys():
+                updated_var = constants_and_variables_instantiation_map[formula.variable].root
+            updated_bound_variables = set(bound_variables).union({updated_var})
+            instantiated_predicate = Schema._instantiate_helper(formula.predicate, constants_and_variables_instantiation_map,
+                                                                relations_instantiation_map, updated_bound_variables)
+            return Formula(root, updated_var, instantiated_predicate)
 
     def instantiate(self, instantiation_map: InstantiationMap) -> \
             Union[Formula, None]:
