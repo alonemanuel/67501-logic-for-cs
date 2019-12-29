@@ -16,6 +16,7 @@ from predicates.syntax import *
 #: terms, variable names, and formulas respectively.
 InstantiationMap = Mapping[str, Union[Term, str, Formula]]
 
+
 @frozen
 class Schema:
     """An immutable schema of predicate-logic formulas, comprised of a formula
@@ -48,7 +49,7 @@ class Schema:
             assert is_constant(template) or is_variable(template) or \
                    is_relation(template)
             if is_relation(template):
-                arities = {arity for relation,arity in formula.relations() if
+                arities = {arity for relation, arity in formula.relations() if
                            relation == template}
                 assert arities == {0} or arities == {1}
         self.formula = formula
@@ -116,7 +117,7 @@ class Schema:
                     that is disallowed during a schema instantiation.
                 relation_name: the relation name during whose substitution the
                     relevant occurrence of the variable name is to become bound.
-            """            
+            """
             assert is_variable(variable_name)
             assert is_relation(relation_name)
             self.variable_name = variable_name
@@ -239,16 +240,21 @@ class Schema:
             assert is_variable(variable)
         # Task 9.3
 
-
         root = formula.root
         if is_equality(root):
-            pass
+            arg0 = formula.arguments[0].substitute(constants_and_variables_instantiation_map, bound_variables)
+            arg1 = formula.arguments[1].substitute(constants_and_variables_instantiation_map, bound_variables)
+            return Formula(root, [arg0, arg1])
+
         elif is_unary(root):
-            inside_formula = Schema._instantiate_helper(formula.first, constants_and_variables_instantiation_map, relations_instantiation_map, bound_variables)
+            inside_formula = Schema._instantiate_helper(formula.first, constants_and_variables_instantiation_map,
+                                                        relations_instantiation_map, bound_variables)
             return Formula(root, inside_formula)
         elif is_binary(root):
-            l_inst = Schema._instantiate_helper(formula.first, constants_and_variables_instantiation_map, relations_instantiation_map, bound_variables)
-            r_inst = Schema._instantiate_helper(formula.second, constants_and_variables_instantiation_map, relations_instantiation_map, bound_variables)
+            l_inst = Schema._instantiate_helper(formula.first, constants_and_variables_instantiation_map,
+                                                relations_instantiation_map, bound_variables)
+            r_inst = Schema._instantiate_helper(formula.second, constants_and_variables_instantiation_map,
+                                                relations_instantiation_map, bound_variables)
             return Formula(root, l_inst, r_inst)
         elif is_relation(root):
 
@@ -260,12 +266,12 @@ class Schema:
             if root in relations_instantiation_map.keys():
                 instantiation = relations_instantiation_map[root]
                 bad_vars = list(instantiation.free_variables().intersection(bound_variables))
-                if len(bad_vars)>0:
+                if len(bad_vars) > 0:
                     raise Schema.BoundVariableError(bad_vars[0], root)
 
                 if len(formula.arguments):
 
-                    new_formula = instantiation.substitute({'_':inst_args[0]})
+                    new_formula = instantiation.substitute({'_': inst_args[0]})
                 else:
                     new_formula = instantiation
             else:
@@ -277,7 +283,8 @@ class Schema:
             if formula.variable in constants_and_variables_instantiation_map.keys():
                 updated_var = constants_and_variables_instantiation_map[formula.variable].root
             updated_bound_variables = set(bound_variables).union({updated_var})
-            instantiated_predicate = Schema._instantiate_helper(formula.predicate, constants_and_variables_instantiation_map,
+            instantiated_predicate = Schema._instantiate_helper(formula.predicate,
+                                                                constants_and_variables_instantiation_map,
                                                                 relations_instantiation_map, updated_bound_variables)
             return Formula(root, updated_var, instantiated_predicate)
 
@@ -394,6 +401,35 @@ class Schema:
                 assert is_relation(key)
                 assert isinstance(instantiation_map[key], Formula)
         # Task 9.4
+        const_and_var_dict = dict()
+        relation_dict = dict()
+        vars = self.formula.variables()
+        consts = self.formula.constants()
+        relations = list(zip(*self.formula.relations()))[0]
+        for key, val in instantiation_map.items():
+            if not key in self.templates:
+                return None
+            if is_variable(key):
+                if not key in vars:
+                    return None
+                const_and_var_dict[key] = Term(val)
+            if is_constant(key):
+                if not key in consts:
+                    return None
+                const_and_var_dict[key] = val
+            if is_relation(key):
+                if not key in relations:
+                    return None
+                relation_dict[key] = val
+        try:
+            return self._instantiate_helper(self.formula, const_and_var_dict, relation_dict, set())
+
+        except Schema.BoundVariableError:
+            return None
+        except ForbiddenVariableError:
+            return None
+
+
 
 @frozen
 class Proof:
@@ -412,7 +448,7 @@ class Proof:
     assumptions: FrozenSet[Schema]
     conclusion: Formula
     lines: Tuple[Proof.Line, ...]
-    
+
     def __init__(self, assumptions: AbstractSet[Schema], conclusion: Formula,
                  lines: Sequence[Proof.Line]) -> None:
         """Initializes a `Proof` from its assumptions/axioms, conclusion,
@@ -443,7 +479,7 @@ class Proof:
         formula: Formula
         assumption: Schema
         instantiation_map: InstantiationMap
-    
+
         def __init__(self, formula: Formula, assumption: Schema,
                      instantiation_map: InstantiationMap) -> None:
             """Initializes an `~Proof.AssumptionLine` from its formula, its
@@ -497,7 +533,7 @@ class Proof:
             """
             assert line_number < len(lines) and lines[line_number] is self
             # Task 9.5
-    
+
     @frozen
     class MPLine:
         """An immutable proof line justified by the Modus Ponens (MP) inference
@@ -664,7 +700,7 @@ class Proof:
 
     #: An immutable proof line.
     Line = Union[AssumptionLine, MPLine, UGLine, TautologyLine]
-                 
+
     def __repr__(self) -> str:
         """Computes a string representation of the current proof.
 
@@ -673,13 +709,13 @@ class Proof:
         """
         r = 'Proof of ' + str(self.conclusion) + ' from assumptions/axioms:\n'
         for assumption in self.assumptions:
-            r += '  '  + str(assumption) + '\n'
+            r += '  ' + str(assumption) + '\n'
         r += 'Lines:\n'
         for i in range(len(self.lines)):
             r += ('%3d) ' % i) + str(self.lines[i]) + '\n'
         r += 'QED\n'
         return r
-        
+
     def is_valid(self) -> bool:
         """Checks if the current proof is a valid proof of its claimed
         conclusion from (instances of) its assumptions/axioms.
@@ -697,15 +733,16 @@ class Proof:
                 return False
         return True
 
+
 from propositions.proofs import Proof as PropositionalProof, \
-                                InferenceRule as PropositionalInferenceRule, \
-                                SpecializationMap as \
-                                PropositionalSpecializationMap
+    InferenceRule as PropositionalInferenceRule, \
+    SpecializationMap as \
+        PropositionalSpecializationMap
 from propositions.axiomatic_systems import AXIOMATIC_SYSTEM as \
-                                           PROPOSITIONAL_AXIOMATIC_SYSTEM, \
-                                           MP, I0, I1, D, I2, N, NI, NN, R
+    PROPOSITIONAL_AXIOMATIC_SYSTEM, \
+    MP, I0, I1, D, I2, N, NI, NN, R
 from propositions.tautology import prove_tautology as \
-                                   prove_propositional_tautology
+    prove_propositional_tautology
 
 # Schema equivalents of the propositional-logic axioms for implication and
 # negation
@@ -725,7 +762,7 @@ D_SCHEMA = Schema(Formula.parse(
 I2_SCHEMA = Schema(Formula.parse('(~P()->(P()->Q()))'), {'P', 'Q'})
 #: Schema equivalent of the propositional-logic converse contraposition axiom
 #: `~propositions.axiomatic_systems.N`.
-N_SCHEMA  = Schema(Formula.parse('((~Q()->~P())->(P()->Q()))'), {'P', 'Q'})
+N_SCHEMA = Schema(Formula.parse('((~Q()->~P())->(P()->Q()))'), {'P', 'Q'})
 #: Schema equivalent of the propositional-logic negative-implication
 #: introduction axiom `~propositions.axiomatic_systems.NI`.
 NI_SCHEMA = Schema(Formula.parse('(P()->(~Q()->~(P()->Q())))'), {'P', 'Q'})
@@ -734,7 +771,7 @@ NI_SCHEMA = Schema(Formula.parse('(P()->(~Q()->~(P()->Q())))'), {'P', 'Q'})
 NN_SCHEMA = Schema(Formula.parse('(P()->~~P())'), {'P'})
 #: Schema equivalent of the propositional-logic resolution axiom
 #: `~propositions.axiomatic_systems.R`.
-R_SCHEMA  = Schema(Formula.parse(
+R_SCHEMA = Schema(Formula.parse(
     '((Q()->P())->((~Q()->P())->P()))'), {'P', 'Q'})
 
 #: Schema system equivalent of the axioms of the propositional-logic large
@@ -747,8 +784,9 @@ PROPOSITIONAL_AXIOMATIC_SYSTEM_SCHEMAS = {I0_SCHEMA, I1_SCHEMA, D_SCHEMA,
 #: Mapping from propositional-logic axioms for implication and negation to their
 #: schema equivalents.
 PROPOSITIONAL_AXIOM_TO_SCHEMA = {
-        I0: I0_SCHEMA, I1: I1_SCHEMA, D: D_SCHEMA, I2: I2_SCHEMA, N: N_SCHEMA,
-        NI: NI_SCHEMA, NN: NN_SCHEMA, R: R_SCHEMA}
+    I0: I0_SCHEMA, I1: I1_SCHEMA, D: D_SCHEMA, I2: I2_SCHEMA, N: N_SCHEMA,
+    NI: NI_SCHEMA, NN: NN_SCHEMA, R: R_SCHEMA}
+
 
 def axiom_specialization_map_to_schema_instantiation_map(
         propositional_specialization_map: PropositionalSpecializationMap,
@@ -785,6 +823,7 @@ def axiom_specialization_map_to_schema_instantiation_map(
         assert is_propositional_variable(key)
     # Task 9.11.1
 
+
 def prove_from_skeleton_proof(formula: Formula,
                               skeleton_proof: PropositionalProof,
                               substitution_map: Mapping[str, Formula]) -> \
@@ -812,6 +851,7 @@ def prove_from_skeleton_proof(formula: Formula,
     assert Formula.from_propositional_skeleton(
         skeleton_proof.statement.conclusion, substitution_map) == formula
     # Task 9.11.2
+
 
 def prove_tautology(tautology: Formula) -> Proof:
     """Proves the given predicate-logic tautology.
