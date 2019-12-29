@@ -798,7 +798,28 @@ class Formula:
             substituted.
         """
 
-    # Task 9.6
+        # Task 9.6
+        return self._skeleton_helper(dict())
+
+    def _skeleton_helper(self, mapping):
+        if is_constant(self.root) or is_variable(self.root):
+            return self, mapping
+        elif is_relation(self.root) or is_equality(self.root) or is_quantifier(self.root):
+            if self in mapping.values():
+                for key, val in mapping.items():
+                    if val == self:
+                        var_name = key
+            else:
+                var_name = next(fresh_variable_name_generator)
+                mapping[var_name] = self
+            return PropositionalFormula(var_name), mapping
+        elif is_unary(self.root):
+            sub_formula, sub_mapping = self.first._skeleton_helper(mapping)
+            return PropositionalFormula(self.root, sub_formula), mapping
+        elif is_binary(self.root):
+            first_sub_formula, first_sub_mapping = self.first._skeleton_helper(mapping)
+            second_sub_formula, second_sub_mapping = self.second._skeleton_helper(mapping)
+            return PropositionalFormula(self.root, first_sub_formula, second_sub_formula), mapping
 
     @staticmethod
     def from_propositional_skeleton(skeleton: PropositionalFormula,

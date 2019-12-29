@@ -242,8 +242,8 @@ class Schema:
 
         root = formula.root
         if is_equality(root):
-            arg0 = formula.arguments[0].substitute(constants_and_variables_instantiation_map, bound_variables)
-            arg1 = formula.arguments[1].substitute(constants_and_variables_instantiation_map, bound_variables)
+            arg0 = formula.arguments[0].substitute(constants_and_variables_instantiation_map)
+            arg1 = formula.arguments[1].substitute(constants_and_variables_instantiation_map)
             return Formula(root, [arg0, arg1])
 
         elif is_unary(root):
@@ -405,7 +405,8 @@ class Schema:
         relation_dict = dict()
         vars = self.formula.variables()
         consts = self.formula.constants()
-        relations = list(zip(*self.formula.relations()))[0]
+        relations = self.formula.relations()
+        relations = [] if not relations else list(zip(*relations))[0]
         for key, val in instantiation_map.items():
             if not key in self.templates:
                 return None
@@ -428,7 +429,6 @@ class Schema:
             return None
         except ForbiddenVariableError:
             return None
-
 
 
 @frozen
@@ -533,6 +533,12 @@ class Proof:
             """
             assert line_number < len(lines) and lines[line_number] is self
             # Task 9.5
+            if not self.assumption in assumptions:
+                return False
+            instance = self.assumption.instantiate(self.instantiation_map)
+            if not instance == self.formula:
+                return False
+            return True
 
     @frozen
     class MPLine:
@@ -598,6 +604,11 @@ class Proof:
             """
             assert line_number < len(lines) and lines[line_number] is self
             # Task 9.6
+            if line_number <= max([self.conditional_line_number, self.antecedent_line_number]):
+                return False
+            anti_line = lines[self.antecedent_line_number]
+            conditional_line = lines[self.conditional_line_number]
+            return anti_line.formula == conditional_line.formula.first and self.formula == conditional_line.formula.second
 
     @frozen
     class UGLine:
@@ -654,6 +665,13 @@ class Proof:
             """
             assert line_number < len(lines) and lines[line_number] is self
             # Task 9.7
+            if line_number < self.predicate_line_number:
+                return False
+            if not self.formula.root == 'A':
+                return False
+            if not self.formula.predicate == lines[self.predicate_line_number].formula:
+                return False
+            return True
 
     @frozen
     class TautologyLine:
@@ -697,6 +715,8 @@ class Proof:
             """
             assert line_number < len(lines) and lines[line_number] is self
             # Task 9.9
+            skeleton, mapping = self.formula.propositional_skeleton()
+            return is_propositional_tautology(skeleton)
 
     #: An immutable proof line.
     Line = Union[AssumptionLine, MPLine, UGLine, TautologyLine]
