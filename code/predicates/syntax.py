@@ -841,3 +841,15 @@ class Formula:
         for key in substitution_map:
             assert is_propositional_variable(key)
 # Task 9.10
+            root = skeleton.root
+            if is_constant(root) or is_variable(root):
+                if root in substitution_map.keys():
+                    return substitution_map[root]
+                else:
+                    return Formula(root)
+            elif is_unary(root):
+                return Formula(root, Formula.from_propositional_skeleton(skeleton.first, substitution_map))
+            elif is_binary(root):
+                l_arg = Formula.from_propositional_skeleton(skeleton.first, substitution_map)
+                r_arg = Formula.from_propositional_skeleton(skeleton.second, substitution_map)
+                return Formula(root, l_arg, r_arg)

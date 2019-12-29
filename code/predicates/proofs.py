@@ -842,6 +842,12 @@ def axiom_specialization_map_to_schema_instantiation_map(
     for key in substitution_map:
         assert is_propositional_variable(key)
     # Task 9.11.1
+    new_spec = {}
+    for key, val in propositional_specialization_map.items():
+        new_key = str.upper(key[0]) + key[1:]
+        new_val = Formula.from_propositional_skeleton(val, substitution_map)
+        new_spec[new_key] = new_val
+    return new_spec
 
 
 def prove_from_skeleton_proof(formula: Formula,
@@ -872,6 +878,28 @@ def prove_from_skeleton_proof(formula: Formula,
         skeleton_proof.statement.conclusion, substitution_map) == formula
     # Task 9.11.2
 
+    assumptions = PROPOSITIONAL_AXIOMATIC_SYSTEM_SCHEMAS
+    conclusion = formula
+    lines = []
+
+    for skeleton_line in skeleton_proof.lines:
+        line_formula = Formula.from_propositional_skeleton(skeleton_line.formula, substitution_map)
+        if PropositionalProof.Line.is_assumption(skeleton_line):
+            assumption_schema = Schema(line_formula, set())
+            line = Proof.AssumptionLine(line_formula, assumption_schema, dict())
+        else:
+            if skeleton_line.rule == MP:
+                ante_line_num, cond_line_num = [skeleton_line.assumptions[i] for i in [0, 1]]
+                line = Proof.MPLine(line_formula, ante_line_num, cond_line_num)
+            else:
+                schema_rule = PROPOSITIONAL_AXIOM_TO_SCHEMA[skeleton_line.rule]
+                prop_spec_map = PropositionalInferenceRule.formula_specialization_map(skeleton_line.rule.conclusion, skeleton_line.formula)
+                inst_map = axiom_specialization_map_to_schema_instantiation_map(prop_spec_map, substitution_map)
+                line = Proof.AssumptionLine(line_formula, schema_rule, inst_map)
+        lines.append(line)
+
+    return Proof(assumptions, conclusion, lines)
+
 
 def prove_tautology(tautology: Formula) -> Proof:
     """Proves the given predicate-logic tautology.
@@ -886,3 +914,7 @@ def prove_tautology(tautology: Formula) -> Proof:
     """
     assert is_propositional_tautology(tautology.propositional_skeleton()[0])
     # Task 9.12
+    skeleton_tau, sub_map = tautology.propositional_skeleton()
+    skeleton_proof = prove_propositional_tautology(skeleton_tau)
+    proof = prove_from_skeleton_proof(tautology, skeleton_proof, sub_map)
+    return proof

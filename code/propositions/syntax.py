@@ -213,7 +213,7 @@ class Formula:
             return (Formula(s), '') if ('p' <= s <= 'z' or is_constant(s)) else (None, PREFIX_ERR_MSG)
         elif 'p' <= s[0] <= 'z':
             i = 1
-            while (i < len(s)) and ('0' < s[i] < '9'):
+            while (i < len(s)) and ('0' <= s[i] <= '9'):
                 i += 1
             return Formula(s[:i]), s[i:]
         elif is_constant(s[0]):
