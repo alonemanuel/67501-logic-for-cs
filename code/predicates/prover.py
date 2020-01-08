@@ -49,6 +49,7 @@ class Prover:
     #: Axiomatic system for first-order predicate logic
     AXIOMS = frozenset({UI, EI, US, ES, RX, ME})
 
+
     def __init__(self, assumptions: Collection[Union[Schema, Formula, str]],
                  print_as_proof_forms: bool = False) -> None:
         """Initializes a `Prover` from its assumptions/additional axioms. The
@@ -77,6 +78,7 @@ class Prover:
                 print('  ' + str(assumption))
             print('Lines:')
 
+
     def qed(self) -> Proof:
         """Concludes the proof created by the current prover.
 
@@ -89,6 +91,7 @@ class Prover:
         if self._print_as_proof_forms:
             print('Conclusion:', str(conclusion) + '. QED\n')
         return Proof(self._assumptions, conclusion, self._lines)
+
 
     def _add_line(self, line: Proof.Line) -> int:
         """Appends to the proof being created by the current prover the given
@@ -108,6 +111,7 @@ class Prover:
         if self._print_as_proof_forms:
             print(('%3d) ' % line_number) + str(line.formula))
         return line_number
+
 
     def add_instantiated_assumption(self, instance: Union[Formula, str],
                                     assumption: Schema,
@@ -151,6 +155,7 @@ class Prover:
         return self._add_line(Proof.AssumptionLine(instance, assumption,
                                                    instantiation_map))
 
+
     def add_assumption(self, unique_instance: Union[Formula, str]) -> int:
         """Appends to the proof being created by the current prover a line that
         validly justifies the unique instance of one of the assumptions/axioms
@@ -170,6 +175,7 @@ class Prover:
         return self.add_instantiated_assumption(unique_instance,
                                                 Schema(unique_instance), {})
 
+
     def add_tautology(self, tautology: Union[Formula, str]) -> int:
         """Appends to the proof being created by the current prover a line that
         validly justifies the given tautology.
@@ -185,6 +191,7 @@ class Prover:
         if isinstance(tautology, str):
             tautology = Formula.parse(tautology)
         return self._add_line(Proof.TautologyLine(tautology))
+
 
     def add_mp(self, consequent: Union[Formula, str],
                antecedent_line_number: int, conditional_line_number: int) -> \
@@ -210,6 +217,7 @@ class Prover:
         return self._add_line(Proof.MPLine(consequent, antecedent_line_number,
                                            conditional_line_number))
 
+
     def add_ug(self, quantified: Union[Formula, str],
                unquantified_line_number: int) -> int:
         """Appends to the proof being created by the current prover a line that
@@ -230,6 +238,7 @@ class Prover:
             quantified = Formula.parse(quantified)
         return self._add_line(Proof.UGLine(quantified,
                                            unquantified_line_number))
+
 
     def add_proof(self, conclusion: Union[Formula, str], proof: Proof) -> int:
         """Appends to the proof being created by the current prover a validly
@@ -265,6 +274,7 @@ class Prover:
         line_number = len(self._lines) - 1
         assert self._lines[line_number].formula == conclusion
         return line_number
+
 
     def add_universal_instantiation(self, instantiation: Union[Formula, str],
                                     line_number: int, term: Union[Term, str]) \
@@ -312,6 +322,7 @@ class Prover:
         step1 = self.add_mp(instantiation, line_number, step0)
         return step1
 
+
     def _add_tau_implication_three_args(self, implication: Union[Formula, str],
                                         line_numbers: AbstractSet[int]) -> int:
         line_numbers = sorted(list(line_numbers))
@@ -332,6 +343,7 @@ class Prover:
         step2 = self.add_mp(base_pred, x_and_y, step1)
         step3 = self.add_mp(implication, line_numbers[-1], step2)
         return step3
+
 
     def add_tautological_implication(self, implication: Union[Formula, str],
                                      line_numbers: AbstractSet[int]) -> int:
@@ -377,6 +389,7 @@ class Prover:
         step2 = self.add_mp(implication, line_numbers[-1], step2)
 
         return step2
+
 
     def add_existential_derivation(self, consequent: Union[Formula, str],
                                    line_number1: int, line_number2: int) -> int:
@@ -426,6 +439,7 @@ class Prover:
 
         return step2
 
+
     def add_flipped_equality(self, flipped: Union[Formula, str],
                              line_number: int) -> int:
         """Appends to the proof being created by the current prover a sequence
@@ -452,6 +466,17 @@ class Prover:
         assert equality == Formula('=', [flipped.arguments[1],
                                          flipped.arguments[0]])
         # Task 10.6
+        flipped_first, flipped_second = [flipped.arguments[i] for i in [0, 1]]
+
+        consq = f'({flipped_second}={flipped_second}->{flipped_first}={flipped_second})'
+        f0 = Formula.parse(f'({flipped_second}={flipped_first}->{consq})')
+        step0 = self.add_instantiated_assumption(f0, Prover.ME, {'R':f'_={flipped_second}', 'c': flipped_second, 'd': flipped_first})
+        step1 = self.add_mp(consq, line_number, step0)
+        obv = f'{flipped_second}={flipped_second}'
+        step2 = self.add_instantiated_assumption(obv, Prover.RX, {'c': flipped_second})
+        step3 = self.add_mp(flipped, step2, step1)
+        return step3
+
 
     def add_free_instantiation(self, instantiation: Union[Formula, str],
                                line_number: int,
@@ -500,7 +525,9 @@ class Prover:
                 substitution_map[variable] = Term.parse(term)
         assert instantiation == \
                self._lines[line_number].formula.substitute(substitution_map)
-        # Task 10.7
+
+
+    # Task 10.7
 
     def add_substituted_equality(self, substituted: Union[Formula, str],
                                  line_number: int,
@@ -544,7 +571,9 @@ class Prover:
                    {'_': equality.arguments[0]}),
                    parametrized_term.substitute(
                        {'_': equality.arguments[1]})])
-        # Task 10.8
+
+
+    # Task 10.8
 
     def _add_chaining_of_two_equalities(self, line_number1: int,
                                         line_number2: int) -> int:
@@ -576,7 +605,9 @@ class Prover:
         equality2 = self._lines[line_number2].formula
         assert is_equality(equality2.root)
         assert equality1.arguments[1] == equality2.arguments[0]
-        # Task 10.9.1
+
+
+    # Task 10.9.1
 
     def add_chained_equality(self, chained: Union[Formula, str],
                              line_numbers: Sequence[int]) -> int:
@@ -621,4 +652,4 @@ class Prover:
             assert equality.arguments[0] == current_term
             current_term = equality.arguments[1]
         assert chained.arguments[1] == current_term
-        # Task 10.9.2
+    # Task 10.9.2
