@@ -10,7 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c648b4e7-2b3e-47c0-85a2-2371ca91d22d" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/predicates/prover.py" beforeDir="false" afterPath="$PROJECT_DIR$/predicates/prover.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/predicates/some_proofs.py" beforeDir="false" afterPath="$PROJECT_DIR$/predicates/some_proofs.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test_ex10.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_ex10.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -51,23 +51,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/predicates/prover.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="248">
-              <caret line="543" column="47" selection-start-line="543" selection-start-column="47" selection-end-line="543" selection-end-column="47" />
-              <folding>
-                <element signature="e#22777#24602#1" />
-                <element signature="e#30888#32475#1" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/predicates/prover_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="250">
-              <caret line="141" column="23" selection-start-line="141" selection-start-column="23" selection-end-line="141" selection-end-column="23" />
+            <state relative-caret-position="199">
+              <caret line="117" column="23" lean-forward="true" selection-start-line="117" selection-start-column="23" selection-end-line="117" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -75,8 +62,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/predicates/some_proofs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-125">
-              <caret line="286" column="16" selection-start-line="286" selection-start-column="16" selection-end-line="286" selection-end-column="16" />
+            <state relative-caret-position="484">
+              <caret line="561" column="52" selection-start-line="561" selection-start-column="52" selection-end-line="561" selection-end-column="52" />
               <folding>
                 <element signature="e#148#179#0" expanded="true" />
               </folding>
@@ -87,8 +74,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test_ex10.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="250">
-              <caret line="38" column="19" lean-forward="true" selection-start-line="38" selection-start-column="19" selection-end-line="38" selection-end-column="19" />
+            <state relative-caret-position="564">
+              <caret line="64" column="10" selection-start-line="64" selection-start-column="10" selection-end-line="64" selection-end-column="10" />
             </state>
           </provider>
         </entry>
@@ -100,6 +87,12 @@
       <find>10.7</find>
       <find>10.6</find>
       <find>10.8</find>
+      <find>GROUP</find>
+      <find>instantia</find>
+      <find>task 10.11</find>
+      <find>fiel</find>
+      <find>instantiated_ass</find>
+      <find>instanti</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -110,12 +103,13 @@
       <list>
         <option value="$PROJECT_DIR$/predicates/prover.py" />
         <option value="$PROJECT_DIR$/test_ex10.py" />
+        <option value="$PROJECT_DIR$/predicates/some_proofs.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="1905" />
-    <option name="width" value="1950" />
+    <option name="width" value="1948" />
     <option name="height" value="2175" />
   </component>
   <component name="ProjectId" id="1Ui1Ed45BQhvGbhRKCGdZ3i9sMx" />
@@ -163,7 +157,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -337,12 +331,12 @@
       <workItem from="1577632710595" duration="16015000" />
       <workItem from="1578152800751" duration="13214000" />
       <workItem from="1578493004211" duration="3110000" />
-      <workItem from="1578500054432" duration="5857000" />
+      <workItem from="1578500054432" duration="17460000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5857000" />
+    <option name="totallyTimeSpent" value="17460000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1549" height="877" extended-state="6" />
@@ -492,7 +486,7 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/code$test_ex5.coverage" NAME="test_ex5 Coverage Results" MODIFIED="1575086635632" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/code$test_ex7.coverage" NAME="test_ex7 Coverage Results" MODIFIED="1576773466899" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/code$test_ex10.coverage" NAME="test_ex10 Coverage Results" MODIFIED="1578507069551" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/code$test_ex10.coverage" NAME="test_ex10 Coverage Results" MODIFIED="1578669006653" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/code$test_ex2.coverage" NAME="test_ex2 Coverage Results" MODIFIED="1573241916291" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/code$test_ex3.coverage" NAME="test_ex3 Coverage Results" MODIFIED="1573263404727" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/code$test_ex0.coverage" NAME="test_ex0 Coverage Results" MODIFIED="1572367949797" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -510,35 +504,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/predicates/prover_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="199">
+          <caret line="117" column="23" lean-forward="true" selection-start-line="117" selection-start-column="23" selection-end-line="117" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/test_ex10.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="38" column="19" lean-forward="true" selection-start-line="38" selection-start-column="19" selection-end-line="38" selection-end-column="19" />
+        <state relative-caret-position="564">
+          <caret line="64" column="10" selection-start-line="64" selection-start-column="10" selection-end-line="64" selection-end-column="10" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/predicates/prover.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="248">
-          <caret line="543" column="47" selection-start-line="543" selection-start-column="47" selection-end-line="543" selection-end-column="47" />
-          <folding>
-            <element signature="e#22777#24602#1" />
-            <element signature="e#30888#32475#1" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/predicates/prover_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="141" column="23" selection-start-line="141" selection-start-column="23" selection-end-line="141" selection-end-column="23" />
+        <state relative-caret-position="383">
+          <caret line="710" selection-start-line="710" selection-end-line="710" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/predicates/some_proofs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-125">
-          <caret line="286" column="16" selection-start-line="286" selection-start-column="16" selection-end-line="286" selection-end-column="16" />
+        <state relative-caret-position="484">
+          <caret line="561" column="52" selection-start-line="561" selection-start-column="52" selection-end-line="561" selection-end-column="52" />
           <folding>
             <element signature="e#148#179#0" expanded="true" />
           </folding>
