@@ -356,27 +356,48 @@ class Prover:
             assert line_number < len(self._lines)
         # Task 10.2
 
-        if len(list(line_numbers)) == 3:
-            return self._add_tau_implication_three_args(implication, line_numbers)
-
-        line_numbers = sorted(list(line_numbers))
-        base_pred = f'({self._lines[line_numbers[-1]].formula}->{implication})'
-        curr_pred = base_pred
-        for line_number in reversed(line_numbers[:-1]):
+        # line_numbers = sorted(list(line_numbers))
+        line_numbers = list(line_numbers)
+        curr_pred = implication
+        for line_number in line_numbers:
             formula = self._lines[line_number].formula
             curr_pred = Formula.parse(f'({formula}->{curr_pred})')
 
-        step2 = implication
+        step = self.add_tautology(curr_pred)
+        for line_number in reversed(line_numbers):
+            # curr_pred = curr_pred.second
+            step = self.add_mp(self._lines[-1].formula.second, line_number, step)
 
-        for line_number in line_numbers[:-1]:
-            formula = self._lines[line_number].formula
-            cond_line = self.add_tautology(curr_pred)
-            curr_pred = curr_pred.second
-            step2 = self.add_mp(curr_pred, line_number, cond_line)
+        return step
 
-        step2 = self.add_mp(implication, line_numbers[-1], step2)
-
-        return step2
+        #
+        #
+        #
+        #
+        # if len(list(line_numbers)) == 3:
+        #     return self._add_tau_implication_three_args(implication, line_numbers)
+        #
+        # line_numbers = sorted(list(line_numbers))
+        # base_pred = f'({self._lines[line_numbers[-1]].formula}->{implication})'
+        # curr_pred = base_pred
+        # for line_number in reversed(line_numbers[:-1]):
+        #     formula = self._lines[line_number].formula
+        #     curr_pred = Formula.parse(f'({formula}->{curr_pred})')
+        #
+        #
+        #
+        #
+        # step2 = implication
+        #
+        # for line_number in line_numbers[:-1]:
+        #     formula = self._lines[line_number].formula
+        #     cond_line = self.add_tautology(curr_pred)
+        #     curr_pred = curr_pred.second
+        #     step2 = self.add_mp(curr_pred, line_number, cond_line)
+        #
+        # step2 = self.add_mp(implication, line_numbers[-1], step2)
+        #
+        # return step2
 
     def add_existential_derivation(self, consequent: Union[Formula, str],
                                    line_number1: int, line_number2: int) -> int:

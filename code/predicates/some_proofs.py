@@ -226,6 +226,30 @@ def lovers_proof(print_as_proof_forms: bool = False) -> Proof:
                      'Ax[Az[Ay[(Loves(x,y)->Loves(z,x))]]]'},
                     print_as_proof_forms)
     # Task 10.4
+
+    f0 = Formula.parse('Ax[Az[Ay[(Loves(x,y)->Loves(z,x))]]]')
+    step0 = prover.add_assumption(f0)
+    f1 = Formula.parse(f'Az[Ay[(Loves(x,y)->Loves(z,x))]]')
+    step1 = prover.add_universal_instantiation(f1, step0, Term('x'))
+    f2 = Formula.parse('Ay[(Loves(x,y)->Loves(z,x))]')
+    step2 = prover.add_universal_instantiation(f2, step1, Term('z'))
+
+    f3 = Formula.parse('Ax[Ey[Loves(x,y)]]')
+    step3 = prover.add_assumption(f3)
+    f4 = Formula.parse('Ey[Loves(x,y)]')
+    step4 = prover.add_universal_instantiation(f4, step3, Term('x'))
+
+    f6 = Formula.parse('((Ay[(Loves(x,y)->Loves(z,x))]&Ey[Loves(x,y)])->Loves(z,x))')
+    map6 = {'x': 'y', 'R': 'Loves(x,_)', 'Q': 'Loves(z,x)'}
+    step6 = prover.add_instantiated_assumption(f6, Prover.ES, map6)
+
+    f7 = Formula.parse('Loves(z,x)')
+    step7 = prover.add_tautological_implication(f7, {step2, step4, step6})
+    f8 = Formula.parse('Az[Loves(z,x)]')
+    step8 = prover.add_ug(f8, step7)
+    f9 = Formula.parse('Ax[Az[Loves(z,x)]]')
+    step9 = prover.add_ug(f9, step8)
+
     return prover.qed()
 
 
@@ -248,6 +272,32 @@ def homework_proof(print_as_proof_forms: bool = False) -> Proof:
     prover = Prover({'~Ex[(Homework(x)&Fun(x))]',
                      'Ex[(Homework(x)&Reading(x))]'}, print_as_proof_forms)
     # Task 10.5
+    f1 = f'((Homework(x)&Fun(x))->Ex[(Homework(x)&Fun(x))])'
+    m1 = {'R': '(Homework(_)&Fun(_))', 'x': 'x', 'c': 'x'}
+    s1 = prover.add_instantiated_assumption(f1, Prover.EI, m1)
+
+    f2 = f'~Ex[(Homework(x)&Fun(x))]'
+    s2 = prover.add_assumption(f2)
+
+    f3 = f'(Homework(x)->~Fun(x))'
+    s3 = prover.add_tautological_implication(f3, {s1, s2})
+
+    f4 = f'((Homework(x)&Reading(x))->(Reading(x)&~Fun(x)))'
+    s4 = prover.add_tautological_implication(f4, {s3})
+
+    f5 = f'((Reading(x)&~Fun(x))->Ex[(Reading(x)&~Fun(x))])'
+    m5 = {'R': '(Reading(_)&~Fun(_))', 'x': 'x', 'c': 'x'}
+    s5 = prover.add_instantiated_assumption(f5, Prover.EI, m5)
+
+    f6 = '((Homework(x)&Reading(x))->Ex[(Reading(x)&~Fun(x))])'
+    s6 = prover.add_tautological_implication(f6, {s4, s5})
+
+    f7 = f'Ex[(Homework(x)&Reading(x))]'
+    s7 = prover.add_assumption(f7)
+
+    f8 = f'Ex[(Reading(x)&~Fun(x))]'
+    s8 = prover.add_existential_derivation(f8, s7, s6)
+
     return prover.qed()
 
 
@@ -588,6 +638,40 @@ def peano_zero_proof(print_as_proof_forms: bool = False) -> Proof:
     """
     prover = Prover(PEANO_AXIOMS, print_as_proof_forms)
     # Task 10.12
+    zero = prover.add_assumption('plus(x,0)=x')
+    successor = prover.add_assumption('plus(x,s(y))=s(plus(x,y))')
+
+    f1 = f'plus(0,s(x))=s(plus(0,x))'
+    s1 = prover.add_free_instantiation(f1, successor, {'x': '0', 'y': 'x'})
+
+    # Double implication:
+    f2 = f'(plus(0,x)=x->(plus(0,s(x))=s(plus(0,x))->plus(0,s(x))=s(x)))'
+    p2 = 'plus(0,s(x))=s(_)'
+    s2 = prover.add_instantiated_assumption(f2, Prover.ME, {'R': p2, 'c': 'plus(0,x)', 'd': 'x'})
+
+    # If (x->(y->z)) and we know that y, then (x->z):
+    f3 = f'(plus(0,x)=x->plus(0,s(x))=s(x))'
+    s3 = prover.add_tautological_implication(f3 , {s2, s1})
+
+    f4 = f'Ax[(plus(0,x)=x->plus(0,s(x))=s(x))]'
+    s4 = prover.add_ug(f4, s3)
+
+    f5 = f'plus(0,0)=0'
+    s5 = prover.add_free_instantiation(f5, zero, {'x': '0'})
+
+    f6 = f'(plus(0,0)=0&Ax[(plus(0,x)=x->plus(0,s(x))=s(x))])'
+    s6 = prover.add_tautological_implication(f6, {s5,s4})
+
+    f7 = f'((plus(0,0)=0&Ax[(plus(0,x)=x->plus(0,s(x))=s(x))])->Ax[plus(0,x)=x])'
+    p7 = 'plus(0,_)=_'
+    s7 = prover.add_instantiated_assumption(f7, INDUCTION_AXIOM, {'R':p7})
+
+    f8 = f'Ax[plus(0,x)=x]'
+    s7 = prover.add_mp(f8, s6, s7)
+
+    f8 = f'plus(0,x)=x'
+    s8 = prover.add_universal_instantiation(f8, s7, 'x')
+    return prover.qed()
     return prover.qed()
 
 
@@ -610,6 +694,23 @@ def russell_paradox_proof(print_as_proof_forms: bool = False) -> Proof:
     """
     prover = Prover({COMPREHENSION_AXIOM}, print_as_proof_forms)
     # Task 10.13
+    f1 = f'(Ax[((In(x,y)->~In(x,x))&(~In(x,x)->In(x,y)))]->((In(y,y)->~In(y,y))&(~In(y,y)->In(y,y))))'
+    m1 = {'R': '((In(_,y)->~In(_,_))&(~In(_,_)->In(_,y)))', 'x': 'x', 'c': 'y'}
+    s1 = prover.add_instantiated_assumption(f1, Prover.UI, m1)
+
+    # False implies false:
+    f2 = f'(((In(y,y)->~In(y,y))&(~In(y,y)->In(y,y)))->(z=z&~z=z))'
+    s2 = prover.add_tautology(f2)
+
+    f3 = f'(Ax[((In(x,y)->~In(x,x))&(~In(x,x)->In(x,y)))]->(z=z&~z=z))'
+    s3 = prover.add_tautological_implication(f3, {s1, s2})
+
+    f4 = f'Ey[Ax[((In(x,y)->~In(x,x))&(~In(x,x)->In(x,y)))]]'
+    m4 = {'R': '~In(_,_)'}
+    s4 = prover.add_instantiated_assumption(f4, COMPREHENSION_AXIOM, m4)
+
+    f5 = f'(z=z&~z=z)'
+    s5 = prover.add_existential_derivation(f5, s4, s3)
     return prover.qed()
 
 
