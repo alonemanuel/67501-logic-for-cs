@@ -10,10 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c648b4e7-2b3e-47c0-85a2-2371ca91d22d" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/predicates/prover.py" beforeDir="false" afterPath="$PROJECT_DIR$/predicates/prover.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/predicates/some_proofs.py" beforeDir="false" afterPath="$PROJECT_DIR$/predicates/some_proofs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_ex10.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_ex10.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/propositions/tautology.py" beforeDir="false" afterPath="$PROJECT_DIR$/propositions/tautology.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -53,6 +50,17 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/propositions/operators.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <folding>
+                <element signature="e#242#275#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/predicates/proofs.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="233">
@@ -64,8 +72,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/predicates/prover.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="358" column="51" selection-start-line="358" selection-start-column="51" selection-end-line="358" selection-end-column="51" />
+            <state relative-caret-position="231">
+              <caret line="11" column="31" lean-forward="true" selection-start-line="11" selection-start-column="31" selection-end-line="11" selection-end-column="31" />
+              <folding>
+                <element signature="e#143#241#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -80,22 +91,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/Downloads/some_proofs/some_proofs.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="626" selection-start-line="626" selection-end-line="659" selection-end-column="23" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/predicates/some_proofs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="619">
-              <caret line="673" column="23" selection-start-line="673" selection-start-column="23" selection-end-line="673" selection-end-column="23" />
-              <folding>
-                <element signature="e#148#179#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="85">
+              <caret line="5" column="25" selection-start-line="5" selection-start-column="25" selection-end-line="5" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -119,6 +118,15 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/propositions/tautology.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="209">
+              <caret line="16" column="31" selection-start-line="16" selection-start-column="31" selection-end-line="16" selection-end-column="31" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test_ex10.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="275">
@@ -143,8 +151,9 @@
       <find>ME</find>
       <find>three</find>
       <find>add_ta</find>
-      <find>add_tault</find>
       <find>homew</find>
+      <find>add_tault</find>
+      <find>from proofs.op</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -157,6 +166,7 @@
         <option value="$USER_HOME$/Downloads/some_proofs/some_proofs.py" />
         <option value="$PROJECT_DIR$/predicates/some_proofs.py" />
         <option value="$PROJECT_DIR$/test_ex10.py" />
+        <option value="$PROJECT_DIR$/propositions/tautology.py" />
       </list>
     </option>
   </component>
@@ -384,19 +394,19 @@
       <workItem from="1577632710595" duration="16015000" />
       <workItem from="1578152800751" duration="13214000" />
       <workItem from="1578493004211" duration="3110000" />
-      <workItem from="1578500054432" duration="25019000" />
+      <workItem from="1578500054432" duration="26087000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="25019000" />
+    <option name="totallyTimeSpent" value="26087000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1549" height="877" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="0" weight="0.24983256" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16141996" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="1" />
@@ -405,7 +415,7 @@
       <window_info anchor="bottom" id="Terminal" order="4" />
       <window_info anchor="bottom" id="Event Log" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="6" />
-      <window_info anchor="bottom" id="Find" order="7" />
+      <window_info anchor="bottom" id="Find" order="7" visible="true" weight="0.328877" />
       <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="10" />
@@ -414,7 +424,7 @@
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="2" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="3" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="4" weight="0.25" />
-      <window_info active="true" anchor="right" id="Run" order="5" visible="true" weight="0.50569326" />
+      <window_info anchor="right" id="Run" order="5" visible="true" weight="0.50569326" />
       <window_info anchor="right" id="Debug" order="6" weight="0.39919624" />
     </layout>
   </component>
@@ -586,13 +596,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/predicates/some_proofs_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" selection-start-line="18" selection-end-line="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/predicates/proofs.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="233">
@@ -614,10 +617,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/test_ex10.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="47" column="32" lean-forward="true" selection-start-line="47" selection-start-column="32" selection-end-line="47" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/predicates/prover.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="358" column="51" selection-start-line="358" selection-start-column="51" selection-end-line="358" selection-end-column="51" />
+        <state relative-caret-position="231">
+          <caret line="11" column="31" lean-forward="true" selection-start-line="11" selection-start-column="31" selection-end-line="11" selection-end-column="31" />
+          <folding>
+            <element signature="e#143#241#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/predicates/some_proofs_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" selection-start-line="18" selection-end-line="18" />
         </state>
       </provider>
     </entry>
@@ -630,18 +650,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/predicates/some_proofs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="619">
-          <caret line="673" column="23" selection-start-line="673" selection-start-column="23" selection-end-line="673" selection-end-column="23" />
+        <state relative-caret-position="85">
+          <caret line="5" column="25" selection-start-line="5" selection-start-column="25" selection-end-line="5" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/propositions/operators.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
           <folding>
-            <element signature="e#148#179#0" expanded="true" />
+            <element signature="e#242#275#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test_ex10.py">
+    <entry file="file://$PROJECT_DIR$/propositions/tautology.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
-          <caret line="47" column="32" lean-forward="true" selection-start-line="47" selection-start-column="32" selection-end-line="47" selection-end-column="32" />
+        <state relative-caret-position="209">
+          <caret line="16" column="31" selection-start-line="16" selection-start-column="31" selection-end-line="16" selection-end-column="31" />
         </state>
       </provider>
     </entry>
