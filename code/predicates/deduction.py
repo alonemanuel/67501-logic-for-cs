@@ -46,7 +46,7 @@ def remove_assumption(proof: Proof, assumption: Formula,
     for i, line in enumerate(proof.lines):
         orig_f = line.formula
         curr_f = f'({antecedent}->{orig_f})'
-        if orig_f==assumption:
+        if orig_f == assumption:
             lut[i] = prover.add_tautology(curr_f)
 
         elif isinstance(line, Proof.AssumptionLine):
@@ -108,3 +108,40 @@ def proof_by_way_of_contradiction(proof: Proof, assumption: Formula,
         if isinstance(line, Proof.UGLine):
             assert line.formula.variable not in assumption.free_variables()
     # Task 11.2
+
+    contradiction = proof.conclusion
+    neg_contradiction = f'~{contradiction}'
+    neg_assumption = f'~{assumption}'
+
+    proof = remove_assumption(proof, assumption)
+    assumptions = proof.assumptions
+    prover = Prover(assumptions, print_as_proof_forms)
+    _copy_lines_from_proof(proof, prover)
+    orig_conclusion_ln = len(proof.lines) - 1
+
+    f0 = neg_contradiction
+    s0 = prover.add_tautology(f0)
+
+    f1 = neg_assumption
+    s1 = prover.add_tautological_implication(f1, {orig_conclusion_ln, s0})
+
+    return prover.qed()
+
+
+def _copy_lines_from_proof(proof_to_copy_from, prover_to_copy_to):
+    prover = prover_to_copy_to
+    for line in proof_to_copy_from.lines:
+        instance = line.formula
+        if isinstance(line, Proof.AssumptionLine):
+            assumption = line.assumption
+            inst_map = line.instantiation_map
+            prover.add_instantiated_assumption(instance, assumption, inst_map)
+        elif isinstance(line, Proof.TautologyLine):
+            prover.add_tautology(instance)
+        elif isinstance(line, Proof.UGLine):
+            unquan_line_number = line.predicate_line_number
+            prover.add_ug(instance, unquan_line_number)
+        elif isinstance(line, Proof.MPLine):
+            ante_ln = line.antecedent_line_number
+            cond_ln = line.conditional_line_number
+            prover.add_mp(instance, ante_ln, cond_ln)

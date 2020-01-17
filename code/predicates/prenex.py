@@ -20,35 +20,36 @@ ADDITIONAL_QUANTIFICATION_AXIOMS = (
     Schema(Formula.parse('((~Ex[R(x)]->Ax[~R(x)])&(Ax[~R(x)]->~Ex[R(x)]))'),
            {'x', 'R'}),
     Schema(Formula.parse('(((Ax[R(x)]&Q())->Ax[(R(x)&Q())])&'
-                         '(Ax[(R(x)&Q())]->(Ax[R(x)]&Q())))'), {'x','R','Q'}),
+                         '(Ax[(R(x)&Q())]->(Ax[R(x)]&Q())))'), {'x', 'R', 'Q'}),
     Schema(Formula.parse('(((Ex[R(x)]&Q())->Ex[(R(x)&Q())])&'
-                         '(Ex[(R(x)&Q())]->(Ex[R(x)]&Q())))'), {'x','R','Q'}),
+                         '(Ex[(R(x)&Q())]->(Ex[R(x)]&Q())))'), {'x', 'R', 'Q'}),
     Schema(Formula.parse('(((Q()&Ax[R(x)])->Ax[(Q()&R(x))])&'
-                         '(Ax[(Q()&R(x))]->(Q()&Ax[R(x)])))'), {'x','R','Q'}),
+                         '(Ax[(Q()&R(x))]->(Q()&Ax[R(x)])))'), {'x', 'R', 'Q'}),
     Schema(Formula.parse('(((Q()&Ex[R(x)])->Ex[(Q()&R(x))])&'
-                         '(Ex[(Q()&R(x))]->(Q()&Ex[R(x)])))'), {'x','R','Q'}),
+                         '(Ex[(Q()&R(x))]->(Q()&Ex[R(x)])))'), {'x', 'R', 'Q'}),
     Schema(Formula.parse('(((Ax[R(x)]|Q())->Ax[(R(x)|Q())])&'
-                         '(Ax[(R(x)|Q())]->(Ax[R(x)]|Q())))'), {'x','R','Q'}),
+                         '(Ax[(R(x)|Q())]->(Ax[R(x)]|Q())))'), {'x', 'R', 'Q'}),
     Schema(Formula.parse('(((Ex[R(x)]|Q())->Ex[(R(x)|Q())])&'
-                         '(Ex[(R(x)|Q())]->(Ex[R(x)]|Q())))'), {'x','R','Q'}),
+                         '(Ex[(R(x)|Q())]->(Ex[R(x)]|Q())))'), {'x', 'R', 'Q'}),
     Schema(Formula.parse('(((Q()|Ax[R(x)])->Ax[(Q()|R(x))])&'
-                         '(Ax[(Q()|R(x))]->(Q()|Ax[R(x)])))'), {'x','R','Q'}),
+                         '(Ax[(Q()|R(x))]->(Q()|Ax[R(x)])))'), {'x', 'R', 'Q'}),
     Schema(Formula.parse('(((Q()|Ex[R(x)])->Ex[(Q()|R(x))])&'
-                         '(Ex[(Q()|R(x))]->(Q()|Ex[R(x)])))'), {'x','R','Q'}),
+                         '(Ex[(Q()|R(x))]->(Q()|Ex[R(x)])))'), {'x', 'R', 'Q'}),
     Schema(Formula.parse('(((Ax[R(x)]->Q())->Ex[(R(x)->Q())])&'
-                         '(Ex[(R(x)->Q())]->(Ax[R(x)]->Q())))'), {'x','R','Q'}),
+                         '(Ex[(R(x)->Q())]->(Ax[R(x)]->Q())))'), {'x', 'R', 'Q'}),
     Schema(Formula.parse('(((Ex[R(x)]->Q())->Ax[(R(x)->Q())])&'
-                         '(Ax[(R(x)->Q())]->(Ex[R(x)]->Q())))'), {'x','R','Q'}),
+                         '(Ax[(R(x)->Q())]->(Ex[R(x)]->Q())))'), {'x', 'R', 'Q'}),
     Schema(Formula.parse('(((Q()->Ax[R(x)])->Ax[(Q()->R(x))])&'
-                         '(Ax[(Q()->R(x))]->(Q()->Ax[R(x)])))'), {'x','R','Q'}),
+                         '(Ax[(Q()->R(x))]->(Q()->Ax[R(x)])))'), {'x', 'R', 'Q'}),
     Schema(Formula.parse('(((Q()->Ex[R(x)])->Ex[(Q()->R(x))])&'
-                         '(Ex[(Q()->R(x))]->(Q()->Ex[R(x)])))'), {'x','R','Q'}),
+                         '(Ex[(Q()->R(x))]->(Q()->Ex[R(x)])))'), {'x', 'R', 'Q'}),
     Schema(Formula.parse('(((R(x)->Q(x))&(Q(x)->R(x)))->'
                          '((Ax[R(x)]->Ay[Q(y)])&(Ay[Q(y)]->Ax[R(x)])))'),
            {'x', 'y', 'R', 'Q'}),
     Schema(Formula.parse('(((R(x)->Q(x))&(Q(x)->R(x)))->'
                          '((Ex[R(x)]->Ey[Q(y)])&(Ey[Q(y)]->Ex[R(x)])))'),
            {'x', 'y', 'R', 'Q'}))
+
 
 def is_quantifier_free(formula: Formula) -> bool:
     """Checks if the given formula contains any quantifiers.
@@ -61,6 +62,15 @@ def is_quantifier_free(formula: Formula) -> bool:
         otherwise.
     """
     # Task 11.3.1
+    if is_unary(formula.root):
+        return is_quantifier_free(formula.first)
+    elif is_binary(formula.root):
+        return is_quantifier_free(formula.first) and is_quantifier_free(formula.second)
+    elif is_relation(formula.root) or is_equality(formula.root):
+        return True
+    elif is_quantifier(formula.root):
+        return False
+
 
 def is_in_prenex_normal_form(formula: Formula) -> bool:
     """Checks if the given formula is in prenex normal form.
@@ -73,6 +83,12 @@ def is_in_prenex_normal_form(formula: Formula) -> bool:
         otherwise.
     """
     # Task 11.3.2
+
+    if not is_quantifier(formula.root):
+        return is_quantifier_free(formula)
+    else:
+        return is_in_prenex_normal_form(formula.predicate)
+
 
 def equivalence_of(formula1: Formula, formula2: Formula) -> Formula:
     """States the equivalence of the two given formulas as a formula.
@@ -89,6 +105,7 @@ def equivalence_of(formula1: Formula, formula2: Formula) -> Formula:
     return Formula('&', Formula('->', formula1, formula2),
                    Formula('->', formula2, formula1))
 
+
 def has_uniquely_named_variables(formula: Formula) -> bool:
     """Checks if the given formula has uniquely named variables.
 
@@ -101,6 +118,7 @@ def has_uniquely_named_variables(formula: Formula) -> bool:
         ``True`` otherwise.
     """
     forbidden_variables = set(formula.free_variables())
+
     def has_uniquely_named_variables_helper(formula: Formula) -> bool:
         if is_unary(formula.root):
             return has_uniquely_named_variables_helper(formula.first)
@@ -117,6 +135,7 @@ def has_uniquely_named_variables(formula: Formula) -> bool:
             return True
 
     return has_uniquely_named_variables_helper(formula)
+
 
 def uniquely_rename_quantified_variables(formula: Formula) -> \
         Tuple[Formula, Proof]:
@@ -141,6 +160,52 @@ def uniquely_rename_quantified_variables(formula: Formula) -> \
         `ADDITIONAL_QUANTIFICATION_AXIOMS`.
     """
     # Task 11.5
+
+    prover = Prover(Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS))
+
+    if is_quantifier(formula.root):
+        orig_pred_formula, pred_proof = uniquely_rename_quantified_variables(formula.predicate)
+        old_var = formula.variable
+        fresh_var = next(fresh_variable_name_generator)
+        pred_formula = orig_pred_formula.substitute({old_var: Term(fresh_var)})
+        new_formula = Formula.parse(f'{formula.root}{fresh_var}[{pred_formula}]')
+        s0 = prover.add_proof(pred_proof.conclusion, pred_proof)
+
+        ante = pred_proof.lines[-1].formula
+        cond = equivalence_of(formula, new_formula)
+        f1 = f'({ante}->{cond})'
+        axiom_i = 14 if formula.root == 'A' else 15
+        axiom = ADDITIONAL_QUANTIFICATION_AXIOMS[axiom_i]
+        m1 = {'R': formula.predicate.substitute({old_var: Term('_')}),
+              'Q': orig_pred_formula.substitute({old_var: Term('_')}),
+              'x': old_var,
+              'y': fresh_var}
+        s1 = prover.add_instantiated_assumption(f1, axiom, m1)
+
+        f2 = cond
+        s2 = prover.add_mp(f2, s0, s1)
+
+
+    elif is_unary(formula.root):
+        first_formula, first_proof = uniquely_rename_quantified_variables(formula.first)
+        new_formula = f'{formula.root}{first_formula}'
+        s_first = prover.add_proof(first_proof.conclusion, first_proof)
+        prover.add_tautological_implication(equivalence_of(formula, Formula.parse(new_formula)), {s_first})
+
+    elif is_binary(formula.root):
+        first_formula, first_proof = uniquely_rename_quantified_variables(formula.first)
+        second_formula, second_proof = uniquely_rename_quantified_variables(formula.second)
+        new_formula = f'({first_formula}{formula.root}{second_formula})'
+        s_first = prover.add_proof(first_proof.conclusion, first_proof)
+        s_second = prover.add_proof(second_proof.conclusion, second_proof)
+        prover.add_tautological_implication(equivalence_of(formula, Formula.parse(new_formula)), {s_first, s_second})
+    elif is_equality(formula.root) or is_relation(formula.root):
+        new_formula = formula
+        prover.add_tautology(equivalence_of(formula, formula))
+        prover.add_tautology(equivalence_of(formula, new_formula))
+
+    return Formula.parse(new_formula) if isinstance(new_formula, str) else new_formula, prover.qed()
+
 
 def pull_out_quantifications_across_negation(formula: Formula) -> \
         Tuple[Formula, Proof]:
@@ -186,8 +251,38 @@ def pull_out_quantifications_across_negation(formula: Formula) -> \
     assert is_unary(formula.root)
     # Task 11.6
 
+    prover = Prover(Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS))
+    if not is_quantifier(formula.first.root):
+        result_formula = formula
+
+        f0 = equivalence_of(formula, result_formula)
+        s0 = prover.add_tautology(f0)
+
+        return result_formula, prover.qed()
+
+    else:
+        formula_without_neg = formula.first
+        orig_formula_quantifier = formula_without_neg.root
+        flipped_formula_quantifier = 'E' if orig_formula_quantifier == 'A' else 'A'
+        formula_var = formula_without_neg.variable
+        negated_predicate = Formula.parse(f'~{formula_without_neg.predicate}')
+        pulled_out_predicate, pulled_out_proof = pull_out_quantifications_across_negation(negated_predicate)
+        result_formula = Formula.parse(f'{flipped_formula_quantifier}{formula_var}[{pulled_out_predicate}]')
+
+        prover.add_proof(pulled_out_proof.conclusion, pulled_out_proof)
+
+        f0 = equivalence_of(formula, result_formula)
+        axiom_i = 0 if formula_without_neg.root == 'A' else 1
+        axiom = ADDITIONAL_QUANTIFICATION_AXIOMS[axiom_i]
+        m0 = {'x': formula_var,
+              'R': formula_without_neg.predicate.substitute({formula_var: Term('_')})}
+        s0 = prover.add_instantiated_assumption(f0, axiom, m0)
+
+        return result_formula, prover.qed()
+
+
 def pull_out_quantifications_from_left_across_binary_operator(formula:
-                                                              Formula) -> \
+Formula) -> \
         Tuple[Formula, Proof]:
     """Converts the given formula with uniquely named variables of the form
     ``'(``\ `Q1`\ `x1`\ ``[``\ `Q2`\ `x2`\ ``[``...\ `Qn`\ `xn`\ ``[``\ `inner_first`\ ``]``...\ ``]]``\ `*`\ `second`\ ``)'``
@@ -232,9 +327,10 @@ def pull_out_quantifications_from_left_across_binary_operator(formula:
     assert has_uniquely_named_variables(formula)
     assert is_binary(formula.root)
     # Task 11.7.1
-    
+
+
 def pull_out_quantifications_from_right_across_binary_operator(formula:
-                                                               Formula) -> \
+Formula) -> \
         Tuple[Formula, Proof]:
     """Converts the given formula with uniquely named variables of the form
     ``'(``\ `first`\ `*`\ `Q1`\ `x1`\ ``[``\ `Q2`\ `x2`\ ``[``...\ `Qn`\ `xn`\ ``[``\ `inner_second`\ ``]``...\ ``]])'``
@@ -279,6 +375,7 @@ def pull_out_quantifications_from_right_across_binary_operator(formula:
     assert has_uniquely_named_variables(formula)
     assert is_binary(formula.root)
     # Task 11.7.2
+
 
 def pull_out_quantifications_across_binary_operator(formula: Formula) -> \
         Tuple[Formula, Proof]:
@@ -327,6 +424,7 @@ def pull_out_quantifications_across_binary_operator(formula: Formula) -> \
     assert is_binary(formula.root)
     # Task 11.8
 
+
 def to_prenex_normal_form_from_uniquely_named_variables(formula: Formula) -> \
         Tuple[Formula, Proof]:
     """Converts the given formula with uniquely named variables to an equivalent
@@ -361,6 +459,7 @@ def to_prenex_normal_form_from_uniquely_named_variables(formula: Formula) -> \
     """
     assert has_uniquely_named_variables(formula)
     # Task 11.9
+
 
 def to_prenex_normal_form(formula: Formula) -> Tuple[Formula, Proof]:
     """Converts the given formula to an equivalent formula in prenex normal

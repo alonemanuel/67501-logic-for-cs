@@ -840,7 +840,7 @@ class Formula:
         """
         for key in substitution_map:
             assert is_propositional_variable(key)
-# Task 9.10
+            # Task 9.10
             root = skeleton.root
             if is_constant(root) or is_variable(root):
                 if root in substitution_map.keys():
