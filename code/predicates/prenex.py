@@ -680,6 +680,94 @@ def to_prenex_normal_form_from_uniquely_named_variables(formula: Formula) -> \
     """
     assert has_uniquely_named_variables(formula)
     # Task 11.9
+    orig_formula = formula
+    prover = Prover(Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS))
+
+    if is_relation(formula.root) or is_equality(formula.root):
+        formula_EQ_formula = equivalence_of(orig_formula, orig_formula)
+        s_formula_EQ_formula = prover.add_tautology(formula_EQ_formula)
+        result_formula = orig_formula
+
+    elif is_quantifier(formula.root):
+        orig_predicate = orig_formula.predicate
+        original_quantifier = orig_formula.root
+        original_var = orig_formula.variable
+        predicate_in_prenex_f, predicate_in_prenex_p = to_prenex_normal_form_from_uniquely_named_variables(
+            orig_predicate)
+        result_formula = Formula.parse(f'{original_quantifier}{original_var}[{predicate_in_prenex_f}]')
+        predicate_in_prenex_s = prover.add_proof(predicate_in_prenex_p.conclusion, predicate_in_prenex_p)
+
+        orig_first_EQ_first_in_prenex = predicate_in_prenex_p.conclusion
+        cond = equivalence_of(orig_formula, result_formula)
+        f0 = Formula.parse(f'({orig_first_EQ_first_in_prenex}->{cond})')
+        axiom_i = 14 if original_quantifier == 'A' else 15
+        axiom = ADDITIONAL_QUANTIFICATION_AXIOMS[axiom_i]
+        m0 = {'R': orig_predicate.substitute({original_var: Term('_')}),
+              'Q': predicate_in_prenex_f.substitute({original_var: Term('_')}),
+              'x': original_var,
+              'y': original_var}
+        s0 = prover.add_instantiated_assumption(f0, axiom, m0)
+
+        f1 = cond
+        s1 = prover.add_mp(f1, predicate_in_prenex_s, s0)
+
+    elif is_unary(formula.root):
+        orig_first = orig_formula.first
+        orig_op = formula.root
+        first_in_prenex_f, first_in_prenex_p = to_prenex_normal_form_from_uniquely_named_variables(orig_first)
+        neg_first_in_prenex = Formula.parse(f'{orig_op}{first_in_prenex_f}')
+        first_in_prenex_s = prover.add_proof(first_in_prenex_p.conclusion, first_in_prenex_p)
+
+        result_formula, result_formula_p = pull_out_quantifications_across_negation(neg_first_in_prenex)
+        neg_first_in_prenex_EQ_result_s = prover.add_proof(result_formula_p.conclusion, result_formula_p)
+
+        orig_EQ_neg_first_in_prenex = equivalence_of(orig_formula, neg_first_in_prenex)
+        orig_first_EQ_first_in_prenex = first_in_prenex_p.conclusion
+        add_neg_f = Formula.parse(f'({orig_first_EQ_first_in_prenex}->{orig_EQ_neg_first_in_prenex})')
+        add_neg_s = prover.add_tautology(add_neg_f)
+
+        f_mp = orig_EQ_neg_first_in_prenex
+        orig_EQ_neg_first_in_prenex_s = prover.add_mp(f_mp, first_in_prenex_s, add_neg_s)
+
+        orig_EQ_result = equivalence_of(orig_formula, result_formula)
+        prover.add_tautological_implication(orig_EQ_result,
+                                            {orig_EQ_neg_first_in_prenex_s, neg_first_in_prenex_EQ_result_s})
+
+    elif is_binary(formula.root):
+        orig_first = orig_formula.first
+        orig_second = orig_formula.second
+        orig_op = formula.root
+        first_in_prenex_f, first_in_prenex_p = to_prenex_normal_form_from_uniquely_named_variables(orig_first)
+        second_in_prenex_f, second_in_prenex_p = to_prenex_normal_form_from_uniquely_named_variables(orig_second)
+        first_in_prenex_s = prover.add_proof(first_in_prenex_p.conclusion, first_in_prenex_p)
+        second_in_prenex_s = prover.add_proof(second_in_prenex_p.conclusion, second_in_prenex_p)
+        first_prenex_OP_second_prenex = Formula.parse(f'({first_in_prenex_f}{orig_op}{second_in_prenex_f})')
+
+        result_formula, result_formula_p = pull_out_quantifications_across_binary_operator(
+            first_prenex_OP_second_prenex)
+        first_pnf_OP_second_PNF_EQ_result_s = prover.add_proof(result_formula_p.conclusion, result_formula_p)
+        orig_EQ_result = equivalence_of(orig_formula, result_formula)
+
+        orig_EQ_first_pnf_OP_second_pnf = equivalence_of(orig_formula, first_prenex_OP_second_prenex)
+        orig_first_EQ_pnf_first = first_in_prenex_p.conclusion
+        orig_second_EQ_pnf_second = second_in_prenex_p.conclusion
+
+        first_EQ_and_second_EQ_f = f'({orig_first_EQ_pnf_first}&{orig_second_EQ_pnf_second})'
+        first_EQ_and_second_EQ_s = prover.add_tautological_implication(first_EQ_and_second_EQ_f,
+                                                                       {first_in_prenex_s, second_in_prenex_s})
+
+        add_op_f = Formula.parse(
+            f'(({orig_first_EQ_pnf_first}&{orig_second_EQ_pnf_second})->{orig_EQ_first_pnf_OP_second_pnf})')
+        add_op_s = prover.add_tautology(add_op_f)
+
+        f_mp = orig_EQ_first_pnf_OP_second_pnf
+        orig_EQ_first_pnf_OP_second_pnf_s = prover.add_mp(f_mp, first_EQ_and_second_EQ_s, add_op_s)
+
+        orig_EQ_result = equivalence_of(orig_formula, result_formula)
+        prover.add_tautological_implication(orig_EQ_result,
+                                            {first_pnf_OP_second_PNF_EQ_result_s, orig_EQ_first_pnf_OP_second_pnf_s})
+
+    return result_formula, prover.qed()
 
 
 def to_prenex_normal_form(formula: Formula) -> Tuple[Formula, Proof]:
@@ -700,3 +788,14 @@ def to_prenex_normal_form(formula: Formula) -> Tuple[Formula, Proof]:
         `ADDITIONAL_QUANTIFICATION_AXIOMS`.
     """
     # Task 11.10
+
+    prover = Prover(Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS))
+
+    formula_with_unique_names_f, formula_with_unique_names_p = uniquely_rename_quantified_variables(formula)
+    orig_EQ_unique_named_s = prover.add_proof(formula_with_unique_names_p.conclusion, formula_with_unique_names_p)
+    formula_in_pnf_f, formula_in_pnf_p = to_prenex_normal_form_from_uniquely_named_variables(
+        formula_with_unique_names_f)
+    unique_named_EQ_pnf_unique_named_s = prover.add_proof(formula_in_pnf_p.conclusion, formula_in_pnf_p)
+    orig_EQ_result = equivalence_of(formula, formula_in_pnf_f)
+    prover.add_tautological_implication(orig_EQ_result, {orig_EQ_unique_named_s, unique_named_EQ_pnf_unique_named_s})
+    return formula_in_pnf_f, prover.qed()

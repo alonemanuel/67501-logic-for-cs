@@ -10,8 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c648b4e7-2b3e-47c0-85a2-2371ca91d22d" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/predicates/prenex.py" beforeDir="false" afterPath="$PROJECT_DIR$/predicates/prenex.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/predicates/prenex_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/predicates/prenex_test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test_ex11.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_ex11.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -43,24 +43,16 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/logic_utils.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="233">
-              <caret line="36" selection-start-line="36" selection-end-line="36" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/predicates/prenex.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="317">
-              <caret line="643" column="32" selection-start-line="643" selection-start-column="32" selection-end-line="643" selection-end-column="32" />
+            <state relative-caret-position="539">
+              <caret line="799" column="115" selection-start-line="799" selection-start-column="115" selection-end-line="799" selection-end-column="115" />
               <folding>
                 <element signature="e#6406#8355#1" />
                 <element signature="e#8589#10746#1" />
                 <element signature="e#11038#13185#1" />
                 <element signature="e#13399#15944#1" />
+                <element signature="e#16160#17399#1" />
               </folding>
             </state>
           </provider>
@@ -69,8 +61,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/predicates/prenex_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="713">
-              <caret line="132" selection-start-line="132" selection-end-line="132" />
+            <state relative-caret-position="443">
+              <caret line="179" selection-start-line="179" selection-end-line="179" />
             </state>
           </provider>
         </entry>
@@ -90,8 +82,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/predicates/prover.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="223">
-              <caret line="106" selection-start-line="106" selection-end-line="106" />
+            <state relative-caret-position="898">
+              <caret line="365" selection-start-line="365" selection-end-line="365" />
               <folding>
                 <element signature="e#143#241#0" expanded="true" />
               </folding>
@@ -102,17 +94,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/predicates/syntax.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="233">
-              <caret line="53" selection-start-line="53" selection-end-line="53" />
+            <state relative-caret-position="431">
+              <caret line="597" selection-start-line="597" selection-end-line="597" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test_ex11.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="573">
-              <caret line="53" column="10" selection-start-line="53" selection-start-column="10" selection-end-line="53" selection-end-column="10" />
+            <state relative-caret-position="496">
+              <caret line="49" column="16" lean-forward="true" selection-start-line="49" selection-start-column="16" selection-end-line="49" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -138,9 +130,9 @@
       <find>from proofs.op</find>
       <find>ug</find>
       <find>add_ug</find>
-      <find>US</find>
       <find>flippe</find>
       <find>fli</find>
+      <find>US</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -156,8 +148,9 @@
         <option value="$PROJECT_DIR$/propositions/tautology.py" />
         <option value="$PROJECT_DIR$/predicates/deduction.py" />
         <option value="$PROJECT_DIR$/predicates/syntax.py" />
-        <option value="$PROJECT_DIR$/test_ex11.py" />
+        <option value="$PROJECT_DIR$/predicates/prenex_test.py" />
         <option value="$PROJECT_DIR$/predicates/prenex.py" />
+        <option value="$PROJECT_DIR$/test_ex11.py" />
       </list>
     </option>
   </component>
@@ -232,6 +225,28 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.test_ex11">
+    <configuration name="prenex" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="code" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/predicates" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/predicates/prenex.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="test_ex10" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="code" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -268,28 +283,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test_ex11.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="test_ex7" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="code" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test_ex7.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -345,10 +338,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.test_ex11" />
+        <item itemvalue="Python.prenex" />
         <item itemvalue="Python.test_ex10" />
         <item itemvalue="Python.test_ex9" />
         <item itemvalue="Python.test_ex8" />
-        <item itemvalue="Python.test_ex7" />
       </list>
     </recent_temporary>
   </component>
@@ -387,12 +380,12 @@
       <workItem from="1578152800751" duration="13214000" />
       <workItem from="1578493004211" duration="3110000" />
       <workItem from="1578500054432" duration="26684000" />
-      <workItem from="1579104954500" duration="35023000" />
+      <workItem from="1579104954500" duration="42210000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="61707000" />
+    <option name="totallyTimeSpent" value="68894000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1549" height="877" extended-state="6" />
@@ -404,7 +397,7 @@
       <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="1" />
       <window_info anchor="bottom" id="Version Control" order="2" />
-      <window_info anchor="bottom" id="Python Console" order="3" />
+      <window_info anchor="bottom" id="Python Console" order="3" weight="0.44117647" />
       <window_info anchor="bottom" id="Terminal" order="4" />
       <window_info anchor="bottom" id="Event Log" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="6" />
@@ -417,8 +410,8 @@
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="2" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="3" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="4" weight="0.25" />
-      <window_info active="true" anchor="right" id="Run" order="5" visible="true" weight="0.454789" />
-      <window_info anchor="right" id="Debug" order="6" weight="0.4293369" />
+      <window_info active="true" anchor="right" id="Run" order="5" visible="true" weight="0.39316812" />
+      <window_info anchor="right" id="Debug" order="6" weight="0.4300067" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -558,11 +551,6 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/predicates/prenex.py</url>
-          <line>86</line>
-          <option name="timeStamp" value="225" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/predicates/prenex.py</url>
           <line>166</line>
           <option name="timeStamp" value="235" />
         </line-breakpoint>
@@ -573,35 +561,31 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/predicates/prenex.py</url>
-          <line>295</line>
-          <option name="timeStamp" value="239" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/predicates/prenex.py</url>
           <line>538</line>
           <option name="timeStamp" value="246" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/predicates/prenex.py</url>
-          <line>639</line>
-          <option name="timeStamp" value="247" />
+          <line>755</line>
+          <option name="timeStamp" value="257" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/code$test_ex5.coverage" NAME="test_ex5 Coverage Results" MODIFIED="1575086635632" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/code$test_ex7.coverage" NAME="test_ex7 Coverage Results" MODIFIED="1576773466899" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/code$test_ex3.coverage" NAME="test_ex3 Coverage Results" MODIFIED="1573263404727" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/code$prenex.coverage" NAME="prenex Coverage Results" MODIFIED="1579373392388" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/predicates" />
+    <SUITE FILE_PATH="coverage/code$test_ex6.coverage" NAME="test_ex6 Coverage Results" MODIFIED="1575744084298" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/code$prelim_test.coverage" NAME="prelim_test Coverage Results" MODIFIED="1572367883660" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/prelim" />
+    <SUITE FILE_PATH="coverage/code$test_ex11.coverage" NAME="test_ex11 Coverage Results" MODIFIED="1579374826784" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/code$test_ex5.coverage" NAME="test_ex5 Coverage Results" MODIFIED="1575086635632" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/code$test_ex10.coverage" NAME="test_ex10 Coverage Results" MODIFIED="1578776783861" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/code$test_ex2.coverage" NAME="test_ex2 Coverage Results" MODIFIED="1573241916291" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/code$test_ex3.coverage" NAME="test_ex3 Coverage Results" MODIFIED="1573263404727" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/code$test_ex0.coverage" NAME="test_ex0 Coverage Results" MODIFIED="1572367949797" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/code$test_ex9.coverage" NAME="test_ex9 Coverage Results" MODIFIED="1577653459589" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/code$test_ex6.coverage" NAME="test_ex6 Coverage Results" MODIFIED="1575744084298" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/code$test_ex8.coverage" NAME="test_ex8 Coverage Results" MODIFIED="1576779948922" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/code$prelim_test.coverage" NAME="prelim_test Coverage Results" MODIFIED="1572367883660" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/prelim" />
     <SUITE FILE_PATH="coverage/code$test_ex1.coverage" NAME="test_ex1 Coverage Results" MODIFIED="1572683238359" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/code$test_ex11.coverage" NAME="test_ex11 Coverage Results" MODIFIED="1579342525250" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="breakpointCondition">
@@ -732,16 +716,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/predicates/prover.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="223">
-          <caret line="106" selection-start-line="106" selection-end-line="106" />
-          <folding>
-            <element signature="e#143#241#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/propositions/deduction.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="408">
@@ -758,35 +732,46 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/predicates/syntax.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="233">
-          <caret line="53" selection-start-line="53" selection-end-line="53" />
+        <state relative-caret-position="431">
+          <caret line="597" selection-start-line="597" selection-end-line="597" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/predicates/prenex_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="713">
-          <caret line="132" selection-start-line="132" selection-end-line="132" />
+        <state relative-caret-position="443">
+          <caret line="179" selection-start-line="179" selection-end-line="179" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test_ex11.py">
+    <entry file="file://$PROJECT_DIR$/predicates/prover.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="573">
-          <caret line="53" column="10" selection-start-line="53" selection-start-column="10" selection-end-line="53" selection-end-column="10" />
+        <state relative-caret-position="898">
+          <caret line="365" selection-start-line="365" selection-end-line="365" />
+          <folding>
+            <element signature="e#143#241#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/predicates/prenex.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="317">
-          <caret line="643" column="32" selection-start-line="643" selection-start-column="32" selection-end-line="643" selection-end-column="32" />
+        <state relative-caret-position="539">
+          <caret line="799" column="115" selection-start-line="799" selection-start-column="115" selection-end-line="799" selection-end-column="115" />
           <folding>
             <element signature="e#6406#8355#1" />
             <element signature="e#8589#10746#1" />
             <element signature="e#11038#13185#1" />
             <element signature="e#13399#15944#1" />
+            <element signature="e#16160#17399#1" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_ex11.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="496">
+          <caret line="49" column="16" lean-forward="true" selection-start-line="49" selection-start-column="16" selection-end-line="49" selection-end-column="16" />
         </state>
       </provider>
     </entry>

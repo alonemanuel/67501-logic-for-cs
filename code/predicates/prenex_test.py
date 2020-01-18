@@ -7,39 +7,42 @@
 
 from predicates.prenex import *
 
+
 def test_is_quantifier_free(debug=False):
-    for formula,free in [
-            ('x=y', True),
-            ('R(x,y)', True),
-            ('Ax[x=y]', False),
-            ('(R(x)|Q(y))', True),
-            ('(R(x)|Ey[Q(y)])', False),
-            ('(Ax[R(x)]|Q(y))', False),
-            ('(R(x)|((R(z)&~P(c))->Q(y)))', True),
-            ('(R(x)|((R(z)&~Az[P(c)])->Q(y)))', False),
-            ('Ax[Ey[Az[(R(x)|((R(z)&~P(c))->Q(y)))]]]', False),
-            ('Ax[Ey[Az[(R(x)|((R(z)&~Az[P(c)])->Q(y)))]]]', False)]:
+    for formula, free in [
+        ('x=y', True),
+        ('R(x,y)', True),
+        ('Ax[x=y]', False),
+        ('(R(x)|Q(y))', True),
+        ('(R(x)|Ey[Q(y)])', False),
+        ('(Ax[R(x)]|Q(y))', False),
+        ('(R(x)|((R(z)&~P(c))->Q(y)))', True),
+        ('(R(x)|((R(z)&~Az[P(c)])->Q(y)))', False),
+        ('Ax[Ey[Az[(R(x)|((R(z)&~P(c))->Q(y)))]]]', False),
+        ('Ax[Ey[Az[(R(x)|((R(z)&~Az[P(c)])->Q(y)))]]]', False)]:
         formula = Formula.parse(formula)
         if debug:
             print('Testing is_quantifier_free on the formula', formula)
         assert is_quantifier_free(formula) == free
 
+
 def test_is_in_prenex_normal_form(debug=False):
-    for formula,prenex in [
-            ('x=y', True),
-            ('R(x,y)', True),
-            ('Ax[x=y]', True),
-            ('(R(x)|Q(y))', True),
-            ('(R(x)|Ey[Q(y)])', False),
-            ('(Ax[R(x)]|Q(y))', False),
-            ('(R(x)|((R(z)&~P(c))->Q(y)))', True),
-            ('(R(x)|((R(z)&~Az[P(c)])->Q(y)))', False),
-            ('Ax[Ey[Az[(R(x)|((R(z)&~P(c))->Q(y)))]]]', True),
-            ('Ax[Ey[Az[(R(x)|((R(z)&~Az[P(c)])->Q(y)))]]]', False)]:
+    for formula, prenex in [
+        ('x=y', True),
+        ('R(x,y)', True),
+        ('Ax[x=y]', True),
+        ('(R(x)|Q(y))', True),
+        ('(R(x)|Ey[Q(y)])', False),
+        ('(Ax[R(x)]|Q(y))', False),
+        ('(R(x)|((R(z)&~P(c))->Q(y)))', True),
+        ('(R(x)|((R(z)&~Az[P(c)])->Q(y)))', False),
+        ('Ax[Ey[Az[(R(x)|((R(z)&~P(c))->Q(y)))]]]', True),
+        ('Ax[Ey[Az[(R(x)|((R(z)&~Az[P(c)])->Q(y)))]]]', False)]:
         formula = Formula.parse(formula)
         if debug:
             print('Testing is_in_prenex_normal_form on the formula', formula)
         assert is_in_prenex_normal_form(formula) == prenex
+
 
 def test_uniquely_rename_quantified_variables(debug=False):
     for formula in ['Ax[Q(x,y)]',
@@ -53,36 +56,38 @@ def test_uniquely_rename_quantified_variables(debug=False):
         if debug:
             print('Testing uniquely_rename_quantified_variables on', formula,
                   '...')
-        result,proof = uniquely_rename_quantified_variables(formula)
+        result, proof = uniquely_rename_quantified_variables(formula)
         if debug:
             print('... got', result)
         assert has_uniquely_named_variables(result)
         _test_substitution(formula, result, {})
         assert proof.assumptions == \
-            Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS)
+               Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS)
         assert proof.conclusion == equivalence_of(formula, result)
         assert proof.is_valid()
 
+
 def test_pull_out_quantifications_across_negation(debug=False):
-    for formula,expected in [
+    for formula, expected in [
         ('~Q(x,c)', '~Q(x,c)'), ('~Ax[Q(x)]', 'Ex[~Q(x)]'),
         ('~Ex[Q(x)]', 'Ax[~Q(x)]'),
         ('~Ax[Ey[Az[(f(x,y)=z&Q(y))]]]', 'Ex[Ay[Ez[~(f(x,y)=z&Q(y))]]]')]:
         formula = Formula.parse(formula)
         if debug:
             print('Testing pull_out_quantifications_across_negation on',
-                   formula, '...')
-        result,proof = pull_out_quantifications_across_negation(formula)
+                  formula, '...')
+        result, proof = pull_out_quantifications_across_negation(formula)
         if debug:
             print('... got', result)
         assert str(result) == expected
         assert proof.assumptions == \
-            Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS)
+               Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS)
         assert proof.conclusion == equivalence_of(formula, result)
         assert proof.is_valid()
 
+
 def test_pull_out_quantifications_from_left_across_binary_operator(debug=False):
-    for formula,expected in [
+    for formula, expected in [
         ('(Q(x,c)|R(d,y))', '(Q(x,c)|R(d,y))'),
         ('(Ax[T(x)]&S())', 'Ax[(T(x)&S())]'),
         ('(Ex[T(x)]&S())', 'Ex[(T(x)&S())]'),
@@ -98,19 +103,20 @@ def test_pull_out_quantifications_from_left_across_binary_operator(debug=False):
             print('Testing '
                   'pull_out_quantifications_from_left_across_binary_operator'
                   'on', formula, '...')
-        result,proof = \
+        result, proof = \
             pull_out_quantifications_from_left_across_binary_operator(formula)
         if debug:
             print('... got', result)
         assert str(result) == expected
         assert proof.assumptions == \
-            Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS)
+               Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS)
         assert proof.conclusion == equivalence_of(formula, result)
         assert proof.is_valid()
 
+
 def test_pull_out_quantifications_from_right_across_binary_operator(debug=
                                                                     False):
-    for formula,expected in [
+    for formula, expected in [
         ('(Q(x,c)|R(d,y))', '(Q(x,c)|R(d,y))'),
         ('(S()&Ax[T(x)])', 'Ax[(S()&T(x))]'),
         ('(S()&Ex[T(x)])', 'Ex[(S()&T(x))]'),
@@ -126,18 +132,19 @@ def test_pull_out_quantifications_from_right_across_binary_operator(debug=
             print('Testing '
                   'pull_out_quantifications_from_right_across_binary_operator '
                   'on', formula, '...')
-        result,proof = \
+        result, proof = \
             pull_out_quantifications_from_right_across_binary_operator(formula)
         if debug:
             print('... got', result)
         assert str(result) == expected
         assert proof.assumptions == \
-            Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS)
+               Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS)
         assert proof.conclusion == equivalence_of(formula, result)
         assert proof.is_valid()
 
+
 def test_pull_out_quantifications_across_binary_operator(debug=False):
-    for formula,expected in [
+    for formula, expected in [
         ('(Q(x,c)|R(d,y))', '(Q(x,c)|R(d,y))'),
         ('(Ax[S(x)]&Ay[T(y)])', 'Ax[Ay[(S(x)&T(y))]]'),
         ('(Ax[Ey[R(x,y)]]&Az[z=c])', 'Ax[Ey[Az[(R(x,y)&z=c)]]]'),
@@ -148,17 +155,18 @@ def test_pull_out_quantifications_across_binary_operator(debug=False):
         if debug:
             print('Testing pull_out_quantifications_across_binary_operator on',
                   formula, '...')
-        result,proof = pull_out_quantifications_across_binary_operator(formula)
+        result, proof = pull_out_quantifications_across_binary_operator(formula)
         if debug:
             print('... got', result)
         assert str(result) == expected
         assert proof.assumptions == \
-            Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS)
+               Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS)
         assert proof.conclusion == equivalence_of(formula, result)
         assert proof.is_valid()
 
+
 def test_to_prenex_normal_form_from_uniquely_named_variables(debug=False):
-    for formula,pnf in [
+    for formula, pnf in [
         ('Q(x,c)', 'Q(x,c)'),
         ('Ax[Q(x,c)]', 'Ax[Q(x,c)]'),
         ('~~(~Ax[Ey[R(x,y)]]&~Az[Ew[z=w]])',
@@ -174,19 +182,20 @@ def test_to_prenex_normal_form_from_uniquely_named_variables(debug=False):
             print('Testing '
                   'to_prenex_normal_form_from_uniquely_named_variables on',
                   formula, '...')
-        result,proof = \
+        result, proof = \
             to_prenex_normal_form_from_uniquely_named_variables(formula)
         if debug:
             print('... got', result)
         assert is_in_prenex_normal_form(result)
         assert str(result) == pnf
         assert proof.assumptions == \
-            Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS)
+               Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS)
         assert proof.conclusion == equivalence_of(formula, result)
         assert proof.is_valid()
 
+
 def test_to_prenex_normal_form(debug=False):
-    for formula,pnf in [
+    for formula, pnf in [
         ('Q(x,c)', 'Q(x,c)'),
         ('Ax[Q(x,c)]', 'Ax[Q(x,c)]'),
         ('~~(~Ax[Ey[R(x,y)]]&~Ax[Ey[x=y]])',
@@ -201,16 +210,17 @@ def test_to_prenex_normal_form(debug=False):
         formula = Formula.parse(formula)
         if debug:
             print('Testing to_prenex_normal_form on', formula, '...')
-        result,proof = to_prenex_normal_form(formula)
+        result, proof = to_prenex_normal_form(formula)
         if debug:
             print('... got', result)
         assert is_in_prenex_normal_form(result)
         assert has_uniquely_named_variables(result)
         _test_substitution(Formula.parse(pnf), result, {})
         assert proof.assumptions == \
-            Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS)
+               Prover.AXIOMS.union(ADDITIONAL_QUANTIFICATION_AXIOMS)
         assert proof.conclusion == equivalence_of(formula, result)
         assert proof.is_valid()
+
 
 def _test_substitution(original, new, substitution_map):
     assert original.root == new.root
@@ -227,6 +237,7 @@ def _test_substitution(original, new, substitution_map):
         substitution_map[original.variable] = Term(new.variable)
         _test_substitution(original.predicate, new.predicate, substitution_map)
 
+
 def test_ex11(debug=False):
     test_is_quantifier_free(debug)
     test_is_in_prenex_normal_form(debug)
@@ -237,6 +248,7 @@ def test_ex11(debug=False):
     test_pull_out_quantifications_across_binary_operator(debug)
     test_to_prenex_normal_form_from_uniquely_named_variables(debug)
     test_to_prenex_normal_form(debug)
+
 
 def test_all(debug=False):
     test_ex11(debug)
