@@ -149,13 +149,17 @@ class Model(Generic[T]):
 			assert function in self.function_meanings and \
 				   self.function_arities[function] == arity
 			# Task 7.7
+		return self._evaluate_term_helper(term, assignment)
+
+	def _evaluate_term_helper(self, term: Term,
+					  assignment: Mapping[str, T] = frozendict()) -> T:
 		if is_variable(term.root):
 			return assignment[term.root]
 		elif is_constant(term.root):
 			return self.constant_meanings[term.root]
 		elif is_function(term.root):
 			mapping = self.function_meanings[term.root]
-			key = tuple([self.evaluate_term(term, assignment) for term in term.arguments])
+			key = tuple([self._evaluate_term_helper(term, assignment) for term in term.arguments])
 			return mapping[key]
 
 
@@ -186,6 +190,11 @@ class Model(Generic[T]):
 			assert relation in self.relation_meanings and \
 				   self.relation_arities[relation] in {-1, arity}
 		# Task 7.8
+		return self._evaluate_formula_helper(formula, assignment)
+
+	def _evaluate_formula_helper(self, formula: Formula,
+						 assignment: Mapping[str, T] = frozendict()) -> bool:
+
 		if is_equality(formula.root):
 			l_eval = self.evaluate_term(formula.arguments[0], assignment)
 			r_eval = self.evaluate_term(formula.arguments[1], assignment)
@@ -194,10 +203,10 @@ class Model(Generic[T]):
 			subset = tuple([self.evaluate_term(term, assignment) for term in formula.arguments])
 			return subset in self.relation_meanings[formula.root]
 		elif is_unary(formula.root):
-			return not self.evaluate_formula(formula.first, assignment)
+			return not self._evaluate_formula_helper(formula.first, assignment)
 		elif is_binary(formula.root):
-			l_eval = self.evaluate_formula(formula.first, assignment)
-			r_eval = self.evaluate_formula(formula.second, assignment)
+			l_eval = self._evaluate_formula_helper(formula.first, assignment)
+			r_eval = self._evaluate_formula_helper(formula.second, assignment)
 			if formula.root == '&':
 				return l_eval and r_eval
 			elif formula.root == '|':
@@ -213,7 +222,7 @@ class Model(Generic[T]):
 			for elem in self.universe:
 				curr_assign = dict(assignment)
 				curr_assign[formula.variable] = elem
-				results.append(self.evaluate_formula(formula.predicate, curr_assign))
+				results.append(self._evaluate_formula_helper(formula.predicate, curr_assign))
 			return functools.reduce(predicate_func, results)
 
 

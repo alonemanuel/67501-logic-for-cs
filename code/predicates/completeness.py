@@ -349,6 +349,23 @@ def combine_contradictions(proof_from_affirmation: Proof,
         assert len(assumption.formula.free_variables()) == 0
     # Task 12.4
 
+    common_assumptions = proof_from_affirmation.assumptions.intersection(proof_from_negation.assumptions)
+    prover = Prover(common_assumptions)
+
+    affirmed_assumption = list(proof_from_affirmation.assumptions.difference(common_assumptions))[0].formula
+    negated_assumption = list(proof_from_negation.assumptions.difference(common_assumptions))[0].formula
+    proof_of_not_affirmation = proof_by_way_of_contradiction(proof_from_affirmation, affirmed_assumption)
+    proof_of_not_negation = proof_by_way_of_contradiction(proof_from_negation, negated_assumption)
+
+    s_affirmation = prover.add_proof(proof_of_not_affirmation.conclusion, proof_of_not_affirmation)
+    s_negation = prover.add_proof(proof_of_not_negation.conclusion, proof_of_not_negation)
+
+    f_affirmation_AND_negation = Formula.parse(f'({affirmed_assumption}&{negated_assumption})')
+    s_affirmation_AND_negation = prover.add_tautological_implication(f_affirmation_AND_negation,
+                                                                     {s_affirmation, s_negation})
+
+    return prover.qed()
+
 
 def eliminate_universal_instantiation_assumption(proof: Proof, constant: str,
                                                  instantiation: Formula,
@@ -382,6 +399,27 @@ def eliminate_universal_instantiation_assumption(proof: Proof, constant: str,
         assert len(assumption.formula.free_variables()) == 0
     # Task 12.5
 
+    proof_of_not_instantiation = proof_by_way_of_contradiction(proof, instantiation)
+    assumptions = proof_of_not_instantiation.assumptions
+    prover = Prover(assumptions)
+    f_not_instantiation = proof_of_not_instantiation.conclusion
+    s_not_instantiation = prover.add_proof(f_not_instantiation, proof_of_not_instantiation)
+
+    f_universal = universal
+    s_universal = prover.add_assumption(f_universal)
+
+    f_instantiation = instantiation
+
+    universal_variables = universal.predicate.variables()
+    instantiation_constants = instantiation.constants()
+    var_instantiation = list(instantiation_constants.difference(universal_variables))[0]
+    s_instantiation = prover.add_universal_instantiation(f_instantiation, s_universal, Term(var_instantiation))
+    f_not_instantiation_AND_instantiation = Formula.parse(f'({f_not_instantiation}&{instantiation})')
+    s_not_instantiation_AND_instantiation = prover.add_tautological_implication(f_not_instantiation_AND_instantiation,
+                                                                                {s_not_instantiation, s_instantiation})
+
+    return prover.qed()
+
 
 def universal_closure_step(sentences: AbstractSet[Formula]) -> Set[Formula]:
     """Augments the given sentences with all universal instantiations of each
@@ -402,6 +440,19 @@ def universal_closure_step(sentences: AbstractSet[Formula]) -> Set[Formula]:
         assert is_in_prenex_normal_form(sentence) and \
                len(sentence.free_variables()) == 0
     # Task 12.6
+
+    sentences_superset = set(sentences)
+
+    for const in get_constants(sentences):
+        for sentence in sentences:
+            if not sentence.root == 'A':
+                continue
+            else:
+                var = sentence.variable
+                instantiation = sentence.predicate.substitute({var: Term(const)})
+                sentences_superset.update({instantiation})
+
+    return sentences_superset
 
 
 def replace_constant(proof: Proof, constant: str, variable: str = 'zz') -> \
@@ -430,6 +481,52 @@ def replace_constant(proof: Proof, constant: str, variable: str = 'zz') -> \
     for line in proof.lines:
         assert variable not in line.formula.variables()
     # Task 12.7.1
+    substituted_assumptions = set()
+    for assumption in proof.assumptions:
+        sub_assumption = _replace_schema(assumption, constant, variable)
+        substituted_assumptions.update({sub_assumption})
+
+    substituted_lines = list()
+    for line in proof.lines:
+        sub_formula = line.formula.substitute({constant: Term(variable)})
+        if isinstance(line, Proof.AssumptionLine):
+            sub_assumption = _replace_schema(line.assumption, constant, variable)
+            sub_map = _replace_substitution_map(line.instantiation_map, constant, variable)
+            substituted_lines.append(Proof.AssumptionLine(sub_formula, sub_assumption, sub_map))
+        elif isinstance(line, Proof.MPLine):
+            substituted_lines.append(
+                Proof.MPLine(sub_formula, line.antecedent_line_number, line.conditional_line_number))
+        elif isinstance(line, Proof.UGLine):
+            substituted_lines.append(Proof.UGLine(sub_formula, line.predicate_line_number))
+        elif isinstance(line, Proof.TautologyLine):
+            substituted_lines.append(Proof.TautologyLine(sub_formula))
+
+    sub_conclusion = substituted_lines[-1].formula
+    return Proof(substituted_assumptions, sub_conclusion, substituted_lines)
+
+
+def _replace_substitution_map(map, constant, variable):
+    sub_map = dict(map)
+    for key, value in map.items():
+        sub_key = key
+        # sub_key = variable if key == constant else key
+        if isinstance(value, str):
+            sub_val = variable if value == constant else value
+        else:
+            sub_val = value.substitute({constant: Term(variable)}) if constant in value.constants() else value
+        sub_map[sub_key] = sub_val
+
+    return sub_map
+
+
+def _replace_schema(schema, constant, variable):
+    sub_formula = schema.formula.substitute({constant: Term(variable)})
+    if constant in schema.templates:
+        sub_templates = schema.templates.difference({constant}).union({variable})
+    else:
+        sub_templates = schema.templates
+    sub_schema = Schema(sub_formula, sub_templates)
+    return sub_schema
 
 
 def eliminate_existential_witness_assumption(proof: Proof, constant: str,
@@ -469,6 +566,27 @@ def eliminate_existential_witness_assumption(proof: Proof, constant: str,
     for assumption in proof.assumptions.difference({Schema(witness)}):
         assert constant not in assumption.formula.constants()
     # Task 12.7.2
+
+    replaced_proof = replace_constant(proof, constant)
+    witness = witness.substitute({constant: Term('zz')})
+
+    proof_of_not_witness = proof_by_way_of_contradiction(replaced_proof, witness)
+    assumptions = proof_of_not_witness.assumptions
+    prover = Prover(assumptions)
+    f_not_witness = proof_of_not_witness.conclusion
+    s_not_witness = prover.add_proof(f_not_witness, proof_of_not_witness)
+
+    f_existential = existential
+    s_existential = prover.add_assumption(f_existential)
+
+    f_universal_not_witness = Formula.parse(f'Azz[{f_not_witness}]')
+    s_universal_not_witness = prover.add_ug(f_universal_not_witness, s_not_witness)
+
+    f_existential_witness_AND_universal_not_witness = Formula.parse(f'({f_existential}&{f_universal_not_witness})')
+    s_existential_witness_AND_universal_not_witness = prover.add_tautological_implication(
+        f_existential_witness_AND_universal_not_witness, {s_existential, s_universal_not_witness})
+
+    return prover.qed()
 
 
 def existential_closure_step(sentences: AbstractSet[Formula]) -> Set[Formula]:
