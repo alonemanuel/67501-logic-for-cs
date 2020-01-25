@@ -582,11 +582,55 @@ def eliminate_existential_witness_assumption(proof: Proof, constant: str,
     f_universal_not_witness = Formula.parse(f'Azz[{f_not_witness}]')
     s_universal_not_witness = prover.add_ug(f_universal_not_witness, s_not_witness)
 
-    f_existential_witness_AND_universal_not_witness = Formula.parse(f'({f_existential}&{f_universal_not_witness})')
-    s_existential_witness_AND_universal_not_witness = prover.add_tautological_implication(
-        f_existential_witness_AND_universal_not_witness, {s_existential, s_universal_not_witness})
+    renamed_var = Term(existential.variable)
+    renamed_not_witness = f_not_witness.substitute({'zz': renamed_var})
+    f_rename_var_not_witness = renamed_not_witness
+    s_rename_var_not_witness = prover.add_universal_instantiation(f_rename_var_not_witness, s_universal_not_witness,
+                                                                  renamed_var)
+
+    f_universal_not_witness = Formula.parse(f'A{renamed_var.root}[{renamed_not_witness}]')
+    s_universal_not_witness = prover.add_ug(f_universal_not_witness, s_rename_var_not_witness)
+
+    s_not_exists_witness = _prove_not_exists_from_universal_not(prover, f_universal_not_witness,
+                                                                s_universal_not_witness)
+
+    f_not_exists_witness = f'~E{existential.variable}[{renamed_not_witness.first}]'
+    f_existential_witness_AND_not_exists_witness = Formula.parse(f'({f_existential}&{f_not_exists_witness})')
+    s_existential_witness_AND_not_exists_witness = prover.add_tautological_implication(
+        f_existential_witness_AND_not_exists_witness, {s_existential, s_not_exists_witness})
 
     return prover.qed()
+
+
+def _prove_not_exists_from_universal_not(prover, f_universal_not_witness, s_universal_not_witness):
+    not_witness = f_universal_not_witness.predicate
+    witness = not_witness.first
+    s_not_witness = prover.add_universal_instantiation(f_universal_not_witness.predicate, s_universal_not_witness,
+                                                       f_universal_not_witness.variable)
+
+    f_contradiction = '(z=z&~z=z)'
+    f_witness_implies_contradiction = f'({witness}->{f_contradiction})'
+    # 'something' -> 'False' is always a tautology:
+    s_witness_implies_contradiction = prover.add_tautological_implication(f_witness_implies_contradiction,
+                                                                          {s_not_witness})
+
+    var = f_universal_not_witness.variable
+    f_universal_witness_implies_contradiction = f'A{var}[({witness}->(z=z&~z=z))]'
+    s_universal_witness_implies_contradiction = prover.add_ug(f_universal_witness_implies_contradiction,
+                                                              s_witness_implies_contradiction)
+
+    f_tautology = '~(z=z&~z=z)'
+    s_equality = prover.add_tautology(f_tautology)
+    f_ES = f'((A{var}[({witness}->{f_contradiction})]&E{var}[{witness}])->{f_contradiction})'
+    ES_mapping = {'x': var, 'R': witness.substitute({var: Term('_')}), 'Q': f_contradiction}
+    s_ES = prover.add_instantiated_assumption(f_ES, Prover.ES, ES_mapping)
+
+    f_not_exists_witness = f'~E{var}[{witness}]'
+    s_not_exists_witness = prover.add_tautological_implication(f_not_exists_witness,
+                                                               {s_ES, s_universal_witness_implies_contradiction,
+                                                                s_equality})
+
+    return s_not_exists_witness
 
 
 def existential_closure_step(sentences: AbstractSet[Formula]) -> Set[Formula]:
@@ -610,3 +654,21 @@ def existential_closure_step(sentences: AbstractSet[Formula]) -> Set[Formula]:
         assert is_in_prenex_normal_form(sentence) and \
                len(sentence.free_variables()) == 0
     # Task 12.8
+
+    sentences_superset = set(sentences)
+
+    for sentence in sentences:
+        if not sentence.root == 'E':
+            continue
+        else:
+            var = sentence.variable
+            for const in get_constants(sentences):
+                potential_witness = sentence.predicate.substitute({var: Term(const)})
+                if potential_witness in sentences:
+                    break
+            else:
+                fresh_var = next(fresh_constant_name_generator)
+                witness = sentence.predicate.substitute({var: Term(fresh_var)})
+                sentences_superset.update({witness})
+
+    return sentences_superset
